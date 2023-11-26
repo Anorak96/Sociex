@@ -1,0 +1,31 @@
+<form action="" method="POST" id="likeform" name="post_pk">
+    {% csrf_token %}
+    <input type="hidden" name="post_pk" value="{{post.id}}">
+    
+    <div class="d-flex justify-content-start socials p-1">
+        
+        <button class="btn" type="submit" id="likeBtn">
+            {% if request.user not in post.post_likes.all %}
+                <i id="postLike" class="far fa-heart" name="like_id" style="color: rgb(5, 92, 163);font-size: 18px;" value="unliked"></i>
+            {% else %}
+                <i id="postLike" class="fa fa-heart" name="like_id" style="color: red;font-size: 18px;" value="liked"></i> 
+            {% endif %}
+            <span class="">{{post.likes_no}}</span>
+        </button>
+        
+        <a class="btn" href="{% url 'post:detail' post.pk %}">
+            <i class="fas fa-comments mx-1"></i><span>{{post.comment_no}}</span>
+        </a>
+    </div>
+</form>
+
+
+{% comment %} {% for post in posts %}
+    {% for img in post.post_images.all %}
+        <div class="col-md-4">
+            <figure>
+                <img class="img-fluid" src="{{ img.image.url }}" alt="" style="height: 90px; width:70px;">
+            </figure>
+        </div>
+    {% endfor %}
+{% endfor %} {% endcomment %}

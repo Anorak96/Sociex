@@ -1,0 +1,144 @@
+a {
+    text-decoration: none !important;
+    color: black !important;
+}
+.main {
+    background-color: #263A47 !important;
+    background-color: currentcolor;
+    margin-bottom: 20px;
+}
+li {
+    list-style: none !important;
+}
+.shad {
+    box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
+    /* padding: 15px 13px; */
+    margin: 0 0 17px 0;
+}
+.navbar{
+    box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
+    /* background-color: #263A47; */
+}
+.owl-dot span {
+    background: #1d5e9b !important;
+}
+.owl-dot.active span {
+    background: #132D46 !important;
+}
+.owl-item .active {
+    width: 581px !important;
+}
+.bottons {
+    color: #fff!important;
+    background-color: #6D9773 !important;
+    border-color: #6D9773 !important;
+    box-shadow: none;
+}
+
+.fixed {
+    position: fixed;
+    right: 0;
+    /* bottom: 0; */
+    /* left: 0; */
+    z-index: 1030;
+}
+
+/* ===============FORGOT PASSWORD============= */
+.auth_title {
+    font-size: 25px;
+    color: #006270;
+}
+.login-container {
+    border-radius: 12px;
+    box-shadow: 0 0px 28px 0 rgb(0 0 0 / 8%);
+    z-index: 1;
+    max-width: 50%;
+}
+.btn-block {
+    width: 100%;
+}
+
+.img-xs {
+    width: 37px;
+    height: 37px;
+}
+
+.rounded-circle {
+    border-radius: 50% !important;
+}
+
+img {
+    vertical-align: middle;
+    border-style: none;
+}
+.grid-margin {
+    margin-bottom: 1rem;
+}
+.nav-link {
+    color: #FFFFFF !important;
+}
+.navbar-clr {
+    background-color: #092c22!important;
+}
+.nav-user:hover .dropdown-menu {
+    display: block;
+}
+.nav-user-image {
+    border: 2px solid #009394; 
+    border-radius: 50%; 
+    height: 32px; 
+    width: 32px;
+}
+
+/* Animations */
+.btnEntrance {
+    animation-duration: 0.5s;
+    animation-fill-mode: both;
+    animation-name: btnEntrance;
+}
+/* fadeInUp */
+@keyframes btnEntrance {
+    from {
+        opacity: 0;
+        transform: translate3d(0, 100%, 0);
+    }
+
+    to {
+        opacity: 1;
+        transform: translate3d(0, 0, 0);
+    }
+}
+.btnExit {
+    animation-duration: 0.25s;
+    animation-fill-mode: both;
+    animation-name: btnExit;
+}
+/* fadeOutDown */
+@keyframes btnExit {
+    from {
+        opacity: 1;
+    }
+
+    to {
+        opacity: 0;
+        transform: translate3d(0, 100%, 0);
+    }
+}
+/*************************************************************************/
+#back-to-top-btn {
+    display: none;
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    background-color: black;
+    color: #fff;
+    border: none;
+    border-radius: 5px;
+    padding: 10px 15px;
+    cursor: pointer;
+  }
+  
+  #back-to-top-btn:hover {
+    background-color: #0056b3;
+  }
+  

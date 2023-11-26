@@ -1,0 +1,63 @@
+{% load static %}
+{% load widget_tweaks %}
+<!-- Navbar-->
+<nav class="navbar navbar-expand-lg navbar-dark bg-dark mb-2">
+    <div class="container-fluid justify-content-between">
+        <!-- Left elements -->
+        <div class="d-flex">
+            <!-- Brand -->
+            <a class="navbar-brand me-2 mb-1 d-flex align-items-center" href="{% url 'post:posts' %}">
+                <img src="{% static 'images/logo.png' %}" height="25" alt="Sociama Logo" loading="lazy" style="margin-top: 2px;" />
+            </a>
+
+            <!-- Search form -->
+            <form class="input-group w-auto my-auto d-none d-sm-flex">
+                <input autocomplete="off" type="search" class="form-control rounded" placeholder="Search" style="min-width: 125px;" />
+                <span class="input-group-text border-0 d-none d-lg-flex"><i class="fas fa-search"></i></span>
+            </form>
+        </div>
+        <!-- Left elements -->
+
+        <!-- Right elements -->
+        <ul class="navbar-nav flex-row">
+            <li class="nav-item me-2">
+                {% if request.user.is_authenticated %}
+                    <div class="dropdown nav-user">
+                        <img class="dropdown-toggle mt-1 nav-user-image" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" src="{{ request.user.profile_pic.url }}" alt="">
+                        <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+                                <a class="dropdown-item" href="{% url 'user:profile' request.user %}">{{request.user|capfirst}}</a>
+                                <a class="dropdown-item" href="">Settings</a>
+                                <a class="dropdown-item" href="{% url 'user:logout' %}">Logout</a>
+                        </div>
+                    </div>
+                {% else %}
+                    <a class="btn btn-secondary" href="{% url 'user:login' %}?next={{request.path}}">Login</a>
+                {% endif %}
+            </li>
+            {% if request.user.is_authenticated %}
+                <li class="nav-item me-2">
+                    <a class="nav-link" href="{% url 'post:create_post' %}">
+                        <span><i class="fas fa-plus-circle fa-lg"></i> Post</span>
+                    </a>
+                </li>
+                <li class="nav-item me-2">
+                    <a class="nav-link" href="{% url 'chat:chat_index' %}">
+                        <span><i class="fas fa-message fa-lg"></i></span>
+                    </a>
+                </li>
+                <li class="nav-item me-2">
+                    <a class="nav-link" href="{% url 'room:groups' %}">
+                        <span><i class="fas fa-users fa-lg"></i></span>
+                    </a>
+                </li>
+                <li class="nav-item me-2">
+                    <a class="nav-link hidden-arrow" href="#">
+                        <i class="fas fa-bell fa-lg"></i>
+                        <span class="badge rounded-pill badge-notification bg-danger">12</span>
+                    </a>
+                </li>
+            {% endif %}
+        </ul>
+        <!-- Right elements -->
+    </div>
+</nav>

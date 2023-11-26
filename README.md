@@ -1,0 +1,1 @@
+This is a social media web app. Users can create, delete, like and update post. Users can also follow other users, and chat with them.

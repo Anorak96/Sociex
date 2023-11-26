@@ -1,0 +1,32 @@
+{% extends 'main/base.html' %}
+{% load static %}
+{% load widget_tweaks %}
+{% block title %} - Create Post {% endblock title %}
+{% block post %}<link rel="stylesheet" type="text/css" href="{% static 'main/post.css' %}">{% endblock %}
+
+{% block body %}
+<div class="container">
+    <div class="card-header">Create Post</div>
+    {{form.errors}}
+    <form action="" method="POST" enctype="multipart/form-data">
+        {% csrf_token %}
+        <label class="small mb-1" for="inputCaption">Caption</label>
+        {% render_field form.caption class='form-control' %}
+        
+        <label class="small mb-1" for="inputimages">Image</label><br>
+        <input class="form-control" type="file" multiple name="images" accept="image/*" id="id_images">
+        
+        {% render_field imageform.image class='form-control' %}
+        {{imageform.management_form}}
+        {% for form in imageform %}
+            {{form}}
+            <label class="small mb-1" for="inputimages">Image</label><br>
+            <input class="form-control" type="file" name="image" accept="image/*" id="id_images">
+        {% endfor %}
+        
+        <div class="modal-footer mt-1">
+            <button type="submit" class="btn bottons">Post</button>
+        </div>
+    </form>
+</div>
+{% endblock %}

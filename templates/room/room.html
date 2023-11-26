@@ -1,0 +1,53 @@
+{% extends 'main/base.html' %}
+{% load static %}
+{% load widget_tweaks %}
+{% block title %} - {{group.name}} Group  {% endblock title %}
+{% block group %}<link rel="stylesheet" type="text/css" href="{% static 'main/group.css' %}">{% endblock %}
+
+{% block body %}
+    <div class="p-2 shad message-form" style="display: flex; justify-content: end;">
+        <form action="{% url 'room:create_message' %}" method="POST" id="message_form">
+            {% csrf_token %}
+            <input type="hidden" name="group_message" value="{{group.pk}}">
+            <div class="d-flex justify-content-center">
+                {{form.body}}
+                {% render_field form.body class='form-control' placeholder='Make a Comment.' %}
+                <button type="submit" class="btn bottons"><i class="fas fa-location-arrow"></i></button>
+            </div>
+        </form>
+    </div>
+    <section class="group-grid mt-4 container-fluid">
+        <div class="card feed px-2">
+            <h5 class="center mb-0">{{group.name}}</h5><hr class="my-2">
+            <p>{{group.description}}</p>
+        </div>
+
+        <div class="card feed px-2">
+            <h5 class="center mb-0">Conservations</h1><hr class="my-2">
+            {% for mssage in group.message_room.all %}
+                <div class="card group-feed px-2 message mb-2 ">
+                    <div class="d-flex flex-row mt-2">
+                        <img class="rounded-circle" src="{{ mssage.user.profile_pic.url }}" style="object-fit: cover; width: 40px; height: 40px;">
+                        <div class="d-flex flex-column mx-2">
+                            <a href="{% url 'user:profile' mssage.user.pk %}">{{mssage.user}}</a> 
+                            <span>{{mssage.created_at}}</span>
+                        </div>
+                    </div>
+                    <hr>
+                    <p>{{mssage.body}}</p>
+                </div>
+            {% endfor %} 
+        </div>
+        
+        <div class="card feed px-2 pb-2">
+            <h5 class="center mb-0">Members : {{group.members.count}}</h5><hr class="my-2">
+            {% for user in group.members.all %}
+                <div class="d-flex flex-row mt-2 p-2" style="box-shadow: 0 0px 1px 0 rgb(33, 60, 83);">
+                    <img class="rounded-circle" src="{{ user.profile_pic.url }}" style="object-fit: cover; width: 30px; height: 30px;">
+                    <span class="mx-1"><a href="{% url 'user:profile' user.pk %}">{{user.username}}</a> {% if user in group.mods.all %} <span style="color: greenyellow; font-size: 10px;"> Moderator </span>{% endif %}</span> 
+                    <br>
+                </div>
+            {% endfor %}
+        </div>
+    </section>
+{% endblock %}

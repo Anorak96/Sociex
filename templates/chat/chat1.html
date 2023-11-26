@@ -1,0 +1,140 @@
+<section>
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-md-12">
+                <div class="card border-0 mb-0" id="chat3">
+                    <div class="card-body p-0">
+                        <div class="row">
+                            <div class="col-md-5 col-lg-5 col-xl-4 bg-light text-dark">
+                                <div class="p-3">
+                                    <div class="input-group rounded mb-3">
+                                        <input type="search" class="form-control rounded" placeholder="Search"
+                                            aria-label="Search" aria-describedby="search-addon" />
+                                        <span class="input-group-text border-0" id="search-addon">
+                                            <i class="fas fa-search"></i>
+                                        </span>
+                                    </div>
+                                    
+                                    <div data-mdb-perfect-scrollbar="true" style="/*position: relative;*/ /*height: 475px;*/ overflow-y: scroll;">
+                                        <ul class="list-unstyled mb-0">
+                                            {% for chat in chats %}
+                                                <li class="p-2 border-bottom {% if active_user == chat.receiver_user.username %}chat_active{% endif %}">
+                                                    <a href="" class="d-flex justify-content-between {% if active_user == chat.user.username %}is-active{% endif %}">
+                                                        <div class="d-flex flex-row">
+                                                            <div>
+                                                                <img class="img-xs rounded-circle" src="{{ chat.sender_user.profile_pic.url }}"
+                                                                    alt="avatar" class="d-flex align-self-center me-3"
+                                                                    width="60" style="border-radius: 50%;">
+                                                                <span class="badge bg-success badge-dot"></span>
+                                                            </div>
+                                                            <div class="pt-1 d-flex align-items-center">
+                                                                <span class="">{{chat.sender_user|capfirst}}</span>
+                                                            </div>
+                                                        </div>
+                                                        <div class="pt-1 d-flex align-items-center flex-column">
+                                                            <p class="small text-muted mb-1">{{chat.last|timesince}}</p>
+                                                            {% if chat.unread %}
+                                                                <span class="badge bg-danger rounded-pill float-end" id="msg_unread">{{chat.unread}}</span>
+                                                            {% endif %}
+                                                            {{chat_num}}
+                                                        </div>
+                                                    </a>
+                                                </li>
+                                            {% endfor %}
+                                        </ul>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="col-md-7 col-lg-7 col-xl-8 border-left">
+                                <div class="pt-1 pe-3 border-bottom chat_body" id="chat_body" data-mdb-perfect-scrollbar="true" style="position: relative; height: 450px; overflow-y: scroll;">
+                                    <hr>
+                                    {% for chat in chats %}
+                                        {% if chat.sender_user == request.user %}
+                                            <div class='d-flex'>
+                                                <img src="{{ chat.receiver_user.profile_pic.url }}" alt="avatar" class="d-flex align-self-center me-3" width="60" style="border-radius: 50%;">
+                                            </div>
+                                            {{chat.receiver_user}}
+                                        {% else %}
+                                            <div class='d-flex'>
+                                                <img src="{{ chat.sender_user.profile_pic.url }}" alt="avatar" class="d-flex align-self-center me-3" width="60" style="border-radius: 50%;">
+                                                {{chat.sender_user}}
+                                            </div>
+                                        {% endif %}
+                                        <hr>
+                                        {% if chat.body %}{{chat.body}}<br>{% endif %}
+                                        {% if chat.chat_images.all %}
+                                            <div class="row owl-carousel owl-theme">
+                                                {% for image in chat.chat_images.all %}
+                                                    <img src="{{ image.image.url }}" class="item" style="object-fit: cover; height: 200px;">
+                                                {% endfor %}
+                                            </div>  
+                                        {% endif %}
+                                        <hr>
+                                    {% endfor %}<br>
+                                </div>
+                                <div class="text-muted d-flex justify-content-start align-items-center mt-2">
+                                    <form action="" method="POST" id="chatform" class="d-flex justify-content-start">
+                                        {% csrf_token %}
+                                        <input type="hidden" name="receiver_user" value="{{active_user}}">
+                                        {% render_field form.body class='form-control' %}
+                                        <button type="submit" class="ms-3 d-flex align-items-center btn btn-theme">
+                                            <i class="fas fa-paper-plane"></i>
+                                        </button> 
+                                    </form>
+                                </div>
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+
+            </div>
+        </div>
+
+    </div>
+</section>
+
+{% if chat %}
+{% if chat.sender_user == request.user %}
+    <div class='d-flex justify-content-end flex-row mt-1'>
+        <div class="d-flex flex-column me-2">
+            <a href="{% url 'user:profile' chat.sender_user.pk %}">
+                <span class="d-flex justify-content-end"><b>{{chat.sender_user|capfirst}}</b></span>
+            </a>
+            <span class="d-flex justify-content-end" style="font-size: 11px; color: greenyellow;">sent</span>
+            <p>{{chat.date|custom_timesince}}</p>
+        </div>
+        <div>
+            <img src="{{ chat.sender_user.profile_pic.url }}" alt="avatar" class="d-flex align-self-center" width="60" style="border-radius: 50%;">
+        </div>
+    </div>
+{% else %}
+    <div class='d-flex justify-content-start flex-row mt-1'>
+        <div>
+            <img src="{{ chat.sender_user.profile_pic.url }}" alt="avatar" class="d-flex align-self-center me-2" width="60" style="border-radius: 50%;">
+        </div>
+        <div class="d-flex flex-column">
+            <a href="">
+                <span><b>{{chat.sender_user|capfirst}}</b></span>
+            </a>
+            <span  class="d-flex justify-content-start" style="font-size: 11px; color: greenyellow;">received</span>
+            <p>{{chat.date}}</p>
+        </div>
+    </div>
+{% endif %}
+<hr>
+{% if uhat.body %}
+    <p>{{chat.body}}</p><br>
+{% endif %}
+{% if chat.chat_images.all %}
+    <div class="image-grid">
+        {% for image in chat.chat_images.all %}
+            <div class="chat-image">
+                <img src="{{ image.image.url }}">
+            </div>
+        {% endfor %}
+    </div>
+{% endif %}
+{% endif %}
+<!-- ================================================================================================================== -->

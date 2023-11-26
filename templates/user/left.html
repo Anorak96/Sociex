@@ -1,0 +1,25 @@
+<div class="card-body">
+    <div class="d-flex justify-content-center mb-2">
+        <h6 class="card-title border-bottom p-2"><b>People you may know</b></h6>
+    </div>
+    {% for prof in users %}
+        <div class="d-flex justify-content-between mb-2 pb-2 border-bottom">
+            <div class="d-flex align-items-center hover-pointer">
+                <a href="{% url 'user:profile' prof.pk %}">
+                    <img class="img-xs rounded-circle" src="{{ prof.profile_pic.url }}" alt="">
+                </a>
+                <div class="mx-2">
+                    <a href="{% url 'user:profile' prof.pk %}">
+                        <p class="mb-1">{{prof|capfirst}}</p>
+                    </a>
+                    <p class="tx-11 text-muted mb-1">{{mutualfriends_num}} Mutual Friends</p>
+                </div>
+            </div>
+            <form action="{% url 'user:follow' profiles.pk %}" method="POST">
+                {% csrf_token %}
+                <input type="hidden" name="prof_pk" value="{{ prof.pk }}">
+                <button id="follow" class="btn bottons btn-icon" type="submit" style="margin-left: 15px; margin-top: 9px;"><i class="fa-solid fa-user-plus"></i></button>
+            </form>
+        </div>
+    {% endfor %}
+</div>

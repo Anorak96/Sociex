@@ -1,0 +1,43 @@
+.chat{
+    display: grid;
+    gap: 10px;
+    grid-template-columns: 1fr 3fr;
+}
+.image-grid {
+    display: grid;
+    gap: 10px;
+    grid-template-columns: repeat(auto-fit, minmax(163px, 1fr));
+    grid-template-rows: repeat(auto-fit, minmax(187px, 1fr));
+}
+.chat-image {
+    position: relative;
+    overflow: hidden;
+}
+.chat-image img {
+    width: 100%;
+    height: 93%;
+    object-fit: cover;
+}
+.chat-list {
+    box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
+}
+.messages{
+    background-color: #263A5D;
+    padding: 15px;
+    overflow-y: scroll;
+    max-height: 606px;
+    height: 600px !important;
+
+}
+.senders{
+    background-color: #263A5D;
+    padding: 15px;
+}
+hr{
+    color: beige;
+    margin: 3px !important;
+}
+p{
+    color: white;
+    margin-bottom: 0px !important;
+}

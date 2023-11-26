@@ -1,0 +1,27 @@
+{% extends 'user/profile.html' %}
+{% load static %}
+{% block user %}<link rel="stylesheet" type="text/css" href="{% static 'main/user.css' %}">{% endblock %}
+
+{% block following %}
+<section class="user-grid">
+    <div class="feed">
+        {% include "user/left.html" %} 
+    </div>
+    <div class="feed p-2">
+        <div class="following-grid">
+            {% for following in followings %}
+                <a href="{% url 'user:profile' following.pk %}" class="card follow">
+                    <img class="follow-image"src="{{ following.profile_pic.url }}" alt="">
+                    <p class="m-0" style="text-align: center; font-size: 14px;
+                    font-weight: 500;">{{following|capfirst}}</p>
+                </a>
+            {% endfor %}
+        </div>
+    </div>
+    <div>
+        {% include "user/right.html" %}
+    </div>
+
+
+</section>
+{% endblock following %}

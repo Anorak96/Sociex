@@ -1,0 +1,59 @@
+{% extends "main/base.html" %}
+{% load static %}
+{% block title %} - Register{% endblock title %}
+{% block user %}<link rel="stylesheet" type="text/css" href="{% static 'main/user.css' %}">{% endblock %}
+
+{% block body %}
+<div id="main-wrapper" class="container mt-3 login-body" z>
+    <div class="p-3 border">
+        <div class="mb-2">
+            <h3 class="h4 font-weight-bold text-theme">Sign Up</h3>
+        </div>
+
+        <form action="" method="POST">
+            {% csrf_token %}
+            <div class="form-group">
+                
+                <label for="id_username" class="mb-0">Username</label>
+                <input type="text" class="form-control" name="username" maxlength="30" required="" id="id_username" />
+                {{ form.username.errors }}
+            </div>
+            <div class="form-group">
+                
+                <label for="id_email" class="mb-0">Email address</label>
+                <input type="email" class="form-control" name="email" maxlength="40" autofocus="" required="" id="id_email" />
+                {{ form.email.errors }}
+            </div>
+            <div class="form-group">
+                <label for="id_password1" class="mb-0">Enter Password</label>
+                <input type="password" class="form-control" name="password1" autocomplete="new-password" required="" id="password" />
+                <i class="pwreg1" id="showPassword" onclick="togglePasswordVisibility()"><i class="fas fa-eye"></i></i>
+                {{ form.password1.errors }}
+            </div>
+            <div class="form-group">
+                <label for="id_password2" class="mb-0">Enter Password Again</label>
+                <input type="password" class="form-control" name="password2" autocomplete="new-password" required="" id="password2" />
+                <i class="pwreg2" id="showPassword" onclick="togglePassword2Visibility()"><i class="fas fa-eye"></i></i>
+                {{ form.password2.errors }}
+            </div>
+            <button type="submit" class="btn bottons mt-2">Register</button>
+        </form>
+        <p class="text-muted text-center mt-3 mb-0">
+            Already have an account? <a href="{% url 'user:login' %}" class="text-primary ml-1">Login</a>
+        </p>
+    </div>
+</div>
+
+<script>
+    function togglePasswordVisibility() {
+        var passwordInput = document.getElementById('password');
+        // Toggle the input type between 'password' and 'text'
+        passwordInput.type = (passwordInput.type === 'password') ? 'text' : 'password';
+    }
+    function togglePassword2Visibility() {
+        var passwordInput2 = document.getElementById('password2');
+        // Toggle the input type between 'password' and 'text'
+        passwordInput2.type = (passwordInput2.type === 'password') ? 'text' : 'password';
+    }
+</script>
+{% endblock %}

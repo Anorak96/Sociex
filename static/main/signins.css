@@ -1,0 +1,38 @@
+.login-body {
+    width: 600px;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+}
+.text-theme {
+    color: #191E29 !important;
+    text-align: center;
+}
+.btn-theme {
+    background-color: #132D46 !important;
+    color: #fff !important;
+}
+.pwshow {
+    bottom: 146px;
+    position: absolute;
+    right: 51px;
+    cursor: pointer;
+}
+.pwreg1 {
+    bottom: 204px;
+    position: absolute;
+    right: 41px;
+    cursor: pointer;
+}.pwreg2 {
+    bottom: 124px;
+    position: absolute;
+    right: 41px;
+    cursor: pointer;
+}
+.forgot_password {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+}

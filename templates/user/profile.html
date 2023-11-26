@@ -1,0 +1,114 @@
+{% extends 'main/base.html' %}
+{% load widget_tweaks %}
+{% load static %}
+<script type="text/javascript" src="{% static 'main/user.js' %}"></script>
+{% block user %}<link rel="stylesheet" type="text/css" href="{% static 'main/user.css' %}">{% endblock %}
+
+{% block body %}
+<div class="container-fluid mt-3">
+    <div class="profile-page">
+            <div class="mb-2">
+                <div class="profile-header">
+                    <div class="cover">
+                        <div class="gray-shade"></div>
+                        <figure>
+                            <img src="{{ profiles.cover_pic.url }}" class="img-fluid" alt="profile cover" style="height: 300px;">
+                        </figure>
+                        <div class="cover-body d-flex justify-content-between align-items-center">
+                            <div>
+                                <img class="profile-pic" src="{{ profiles.profile_pic.url }}"
+                                    alt="profile">
+                                <span class="profile-name">{{ profiles.username|capfirst }}</span>
+                            </div>
+                            <div class="d-none d-md-block">
+                                {% if profiles == request.user %}
+                                    <button type="button" class="btn bottons" data-bs-toggle="modal" data-bs-target="#exampleModal">
+                                        Post
+                                    </button>
+                                    <a class="btn edit-bottons  btn-edit-profile" href="{% url 'user:update' profiles %}">
+                                        <i class="far fa-edit"></i> Edit profile
+                                    </a>
+                                {% else %}
+                                    <a href="" class="btn btn-primary">Send Message</a>
+                                    <form action="{% url 'user:follow' profiles.pk %}" method="POST" class="btn" id="follow_form">
+                                        {% csrf_token %}
+                                        <input type="hidden" name="prof_pk" value="{{ profiles.pk }}">
+                                        {% if profiles in request.user.following.all %}
+                                            <button id="unfollow" class="btn btn-danger" type="submit">Unfollow</button>
+                                        {% else %}
+                                            <button id="follow" class="btn btn-primary" type="submit">Follow</button>
+                                        {% endif %}
+                                    </form>
+                                {% endif %}
+                            </div>
+                        </div>
+                    </div>
+                    <!-- Modal -->
+                    <div class="modal fade" id="exampleModal" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                        <div class="modal-dialog">
+                            <div class="modal-content">
+                                <div class="modal-header">
+                                    <h5 class="modal-title" id="exampleModalLabel">Create a post</h5>
+                                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                </div>
+                                <form action="" method="POST" enctype="multipart/form-data">
+                                    <div class="modal-body">
+                                        {% csrf_token %}
+                                        <label class="small mb-1" for="inputCaption">Caption</label>
+                                        {% render_field form.caption class='form-control' %}
+                                        
+                                        <label class="small mb-1" for="inputimages">Image</label><br>
+                                        <input class="form-control" type="file" multiple name="images" accept="image/*" id="id_images">
+                                        
+                                        {% render_field imageform.image class='form-control' %}
+                                        {{imageform.management_form}}
+                                        {% for form in imageform %}
+                                            {{form}}
+                                            <label class="small mb-1" for="inputimages">Image</label><br>
+                                            <input class="form-control" type="file" name="images" accept="image/*" id="id_images">
+                                        {% endfor %}
+                                    </div>
+                                    <div class="modal-footer">
+                                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                                        <button type="submit" class="btn bottons">Post</button>
+                                    </div>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="header-links">
+                        <ul class="links d-flex align-items-center mt-3 mt-md-0">
+                            <li class="header-link-item d-flex align-items-center active">
+                                <i class="fas fa-photo-video"></i>
+                                <a class="pt-1px d-none d-md-block" href="{% url 'user:profile' profiles.pk %}"> Timeline</a>
+                            </li>
+                            <li class="header-link-item ms-2 border-left d-flex align-items-center">
+                                <i class="fas fa-users"></i>
+                                <a class="pt-1px d-none d-md-block" href="{% url 'user:following' profiles.pk %}">Following 
+                                    <span style="color: white;">{{profiles.get_followering_no}}</span>
+                                </a>
+                            </li>
+                            <li class="header-link-item ms-2 border-left d-flex align-items-center">
+                                <i class="fas fa-users"></i>
+                                <a class="pt-1px d-none d-md-block" href="{% url 'user:follower' profiles.pk %}">Followers
+                                    <span style="color: white;">{{profiles.get_follower_no}}</span>
+                                </a>
+                            </li>
+                            <li class="header-link-item ms-2 border-left d-flex align-items-center">
+                                <i class="far fa-image"></i>
+                                <a class="pt-1px d-none d-md-block" href="#">Photos</a>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        {% block timeline %}
+        
+        {% endblock timeline %}
+        
+        {% block following %}
+        
+        {% endblock following %}
+    </div>
+</div>
+{% endblock body %}

@@ -1,0 +1,175 @@
+{% extends 'user/profile.html' %}
+{% load custom_filters %}
+{% load static %}
+{% block timeline %}
+{% block user %}<link rel="stylesheet" type="text/css" href="{% static 'main/user.css' %}">{% endblock %}
+
+<div class="row profile-body">
+    <!-- left wrapper start -->
+        <div class="d-none d-md-block col-md-4 col-xl-3 left-wrapper ">
+            <div class="rounded feed">
+                <div class="card-body">
+                    <div class="d-flex justify-content-center mb-2">
+                        <h6 class="card-title border-bottom p-2"><b>People you may know</b></h6>
+                    </div>
+                    {% for prof in users %}
+                        <div class="d-flex justify-content-between mb-2 pb-2 border-bottom">
+                            <div class="d-flex align-items-center hover-pointer">
+                                <a href="{% url 'user:profile' prof.pk %}">
+                                    <img class="img-xs rounded-circle" src="{{ prof.profile_pic.url }}" alt="">
+                                </a>
+                                <div class="mx-2">
+                                    <a href="{% url 'user:profile' prof.pk %}">
+                                        <p class="mb-1">{{prof|capfirst}}</p>
+                                    </a>
+                                    <p class="tx-11 text-muted mb-1">{{mutualfriends_num}} Mutual Friends</p>
+                                </div>
+                            </div>
+                            <form action="{% url 'user:follow' profiles.pk %}" method="POST">
+                                {% csrf_token %}
+                                <input type="hidden" name="prof_pk" value="{{ prof.pk }}">
+                                <button id="follow" class="btn bottons btn-icon" type="submit" style="margin-left: 15px; margin-top: 9px;"><i class="fa-solid fa-user-plus"></i></button>
+                            </form>
+                        </div>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>            
+    <!-- left wrapper end -->
+    <!-- middle wrapper start -->
+    <div class="col-md-8 col-xl-6 middle-wrapper ">
+        <div class="row">
+            {% for post in posts %}
+                <div class="col-md-12 grid-margin ">
+                    <div class="rounded feed">
+                        <div class="card-header">
+                            <div class="d-flex align-items-center justify-content-between">
+                                <div class="d-flex align-items-center">
+                                    <img class="img-xs rounded-circle" src="{{ post.user.profile_pic.url }}" alt="">
+                                    <div class="mx-2">
+                                        <p class="m-0"><b>{{ post.user|capfirst }}</b></p>
+                                        <p class="tx-11 icon-num m-0">{{ post.created_at|custom_timesince }}</p>
+                                    </div>
+                                </div>
+                                {% if post.user == request.user %}
+                                    <div class="px-2 dropdown">
+                                        <button class="feed-icon btn bottons dropdown" type="button" data-bs-toggle="dropdown"  aria-expanded="false"
+                                            aria-expanded="false">
+                                            <i class="fa fa-ellipsis-v text-black-50"></i>
+                                        </button>
+                                        <ul class="dropdown-menu">
+                                            <li><a class="btn dropdown-item" href="{% url 'post:delete' post.pk %}">Delete</a></li>
+                                            <li><a class="btn dropdown-item" href="{% url 'post:post_update' post.pk %}">Update</a></li>
+                                        </ul>
+                                    </div>
+                                {% endif %}
+                            </div>
+                        </div>
+                        <div class="card-body">
+                            <a href="{% url 'post:detail' post.pk %}">
+                                {% if post.caption %}
+                                    <span>{{ post.caption }}</span>
+                                {% endif %}             
+                                {% if post.post_images %}
+                                    <div class="row owl-carousel owl-theme">
+                                        {% for image in post.post_images.all %}
+                                            <img src="{{ image.image.url }}" class="item" style="object-fit: cover; height: 500px;">
+                                        {% endfor %}
+                                    </div>
+                                {% endif %}
+                            </a>
+                        </div>
+                        <div class="d-flex justify-content-start p-1 border-top">
+                            <div class="btn" id="likeBTN">
+                                <input type="hidden" id="post_pk" value="{{post.pk}}">
+                                {% if request.user not in post.likes.all %}
+                                    <i class="far fa-heart icon" style=""></i>
+                                {% else %}
+                                    <i class="fa fa-heart" style="color: red;"></i>
+                                {% endif %}
+                                <span id="like_count" class="icon-num">{{post.likes_no}}</span>
+                            </div>
+                            <a class="btn" href="{% url 'post:detail' post.pk %}">
+                                <i class="fas fa-comments icon"></i>
+                                <span class="icon-num">{{post.comment_no}}</span>
+                            </a>
+                            <div class="btn post-views">
+                                <i class="fa-solid fa-eye icon"></i>
+                                <span class="icon-num black">{{post.post_view}}</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            {% endfor %}
+        </div>
+    </div>
+    <!-- middle wrapper end -->
+    <!-- right wrapper start -->
+    <div class="d-none d-xl-block col-xl-3 right-wrapper position-sticky ">
+        <div class="row">
+            {% if profiles.get_followering_no > 0 %}
+            <div class="col-md-12 grid-margin ">
+                <div class="rounded feed">
+                    <div class="card-header">
+                        <div class="d-flex justify-content-between">
+                            <b>Following<span>({{profiles.get_followering_no}})</span></b> 
+                            {% if profiles.get_following %}
+                            <div class="feed-icon px-2">
+                                <a href="{% url 'user:following' profiles.pk %}">See All</a>
+                            </div>
+                            {% endif %}
+                        </div>
+                    </div>
+                    <div class="card-body">
+                        <div class="row">
+                            {% for prof in profiles.get_following %}
+                                <div class="col-md-4 p-0 feed">
+                                    <a href="{% url 'user:profile' prof.pk %}">
+                                        <div class="m-1">
+                                            <img class="img-fluid rounded" src="{{ prof.profile_pic.url }}" alt="" style="height: 100px;">
+                                            <p style="text-align: center;">{{prof|capfirst}}</p>
+                                        </div>
+                                    </a>
+                                </div>
+                            {% endfor %}
+                        </div>
+                    </div>
+                </div>
+            </div>
+            {% endif %}
+
+            {% if photos.count > 0 %}
+            <div class="col-md-12 grid-margin">
+                <div class="rounded feed">
+                    <div class="card-header">
+                        <div class="d-flex justify-content-between">
+                            <b>Photos</b>
+                            {% if photos.count > 9 %}
+                                <div class="feed-icon px-2">
+                                    <a href="">more<i class="fas fa-angle-double-right"></i></a>
+                                </div>
+                            {% endif %}
+                        </div>
+                    </div>
+                    <div class="card-body pt-1">
+                        <div class="latest-photos">
+                            <div class="row">
+                                {% for photo in photos %}
+                                    <div class="col-md-4">
+                                        <figure class="image">
+                                            {% if forloop.counter <= 9 %}
+                                                <img class="image-item" src="{{ photo.image.url }}" alt="" style="">
+                                            {% endif %}
+                                        </figure>
+                                    </div>
+                                {% endfor %}
+                            </div>
+                        </div>
+                </div>
+            </div>
+            {% endif %}
+        </div>
+    </div>
+    <!-- right wrapper end -->
+</div>
+{% endblock timeline %}

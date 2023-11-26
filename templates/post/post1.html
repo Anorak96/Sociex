@@ -1,0 +1,119 @@
+{% extends "main/base.html" %}
+{% load static %}
+{% block title %} - Post Feed{% endblock title %}
+<script type="text/javascript" src="{% static 'main/post.js' %}"></script>
+<link rel="stylesheet" type="text/css" href="{% static 'main/post.css' %}">
+
+{% block body %}
+
+<div class="container mt-4 mb-5">
+    <div class="d-flex justify-content-center row">
+        <div class="col-md-8 infinite-container">
+            {% for post in posts %}
+                <div class="feed shad infinite-item rounded" id="{{post.pk}}">
+                    <div class="card-header px-2 border-bottom">
+                        <div class="d-flex flex-row justify-content-between align-items-center">
+                            <div class="d-flex flex-row align-items-center feed-text px-2">
+                                <a href="{% url 'user:profile' post.user.pk %}">
+                                    <img class="rounded-circle" src="{{ post.user.profile_pic.url }}" style="object-fit: cover; width: 50px; height: 50px;">
+                                </a>
+                                <div class="d-flex flex-column flex-wrap mx-2">
+                                    <a href="{% url 'user:profile' post.user.pk %}">
+                                        <span><b>{{post.user|capfirst}}</b></span>
+                                    </a>
+                                    <p class="tx-11 m-0 icon-num">{{post.created_at|custom_timesince}}</p>
+                                </div>
+                            </div>
+                            {% if post.user == request.user %}
+                                <div class="px-2 dropdown">
+                                    <button class="btn bottons dropdown feed-icon" type="button" data-bs-toggle="dropdown"  aria-expanded="false" aria-expanded="false">
+                                        <i class="fa fa-ellipsis-v text-black-50"></i>
+                                    </button>
+                                    <ul class="dropdown-menu">
+                                        <li><a class="btn dropdown-item" href="{% url 'post:delete' post.pk %}">Delete</a></li>
+                                        <li><a class="btn dropdown-item" href="{% url 'post:post_update' post.pk %}">Update</a></li>
+                                    </ul>
+                                </div>
+                            {% endif %}
+                        </div>
+                    </div>
+                    <div class="p-2 px-3">
+                        <a href="{% url 'post:detail' post.pk %}">
+                            {% if post.caption %}
+                                <span>{{post.caption}}</span><br>
+                            {% endif %}
+                            {% if post.post_images %}
+                                <div class="row owl-carousel owl-theme">
+                                    {% for image in post.post_images.all %}
+                                            <img src="{{ image.image.url }}" class="item" style="object-fit: cover; height: 500px;">
+                                    {% endfor %}
+                                </div>
+                            {% endif %}
+                        </a>
+                    </div>
+                    <div class="d-flex justify-content-start p-1 border-top">
+                        <div class="btn" id="likeBTN">
+                            <input type="hidden" id="post_pk" value="{{post.pk}}">
+                            {% if request.user not in post.likes.all %}
+                                <i class="far fa-heart icon" style=""></i>
+                            {% else %}
+                                <i class="fa fa-heart" style="color: red;"></i>
+                            {% endif %}
+                            <span id="like_count" class="icon-num">{{post.likes_no}}</span>
+                        </div>
+                        <a class="btn" href="{% url 'post:detail' post.pk %}">
+                            <i class="fas fa-comments icon"></i>
+                            <span class="icon-num">{{post.comment_no}}</span>
+                        </a>
+                        <div class="btn post-views">
+                            <i class="fa-solid fa-eye icon"></i>
+                            <span class="icon-num black">{{post.post_view}}</span>
+                        </div>
+                    </div>
+                </div>
+            {% endfor %}
+        </div>
+         <div class="col-md-4 following">
+            <div class="shad feed" style="padding: 15px 13px;">
+                {% for following in request.user.get_following %}
+                    <ol class="py-1 my-1 border-bottom" style="padding-left: 0;">
+                        <a href="{% url 'user:profile' following.pk %}">
+                            <img class="rounded-circle mx-1" src="{{ following.profile_pic.url }}" style="object-fit: cover; width: 50px; height: 50px;">
+                            <b>{{following|capfirst}}</b>
+                        </a>
+                    </ol>
+                {% endfor %}
+            </div>
+
+            <div class="shad feed">
+                <div class="card-body">
+                    <div class="d-flex justify-content-center mb-2">
+                        <h6 class="border-bottom p-2" style="color : lightsteelblue"><b>People you may know</b></h6>
+                    </div>
+                    {% for prof in users %}
+                        <div class="d-flex justify-content-between mb-2 pb-2 border-bottom">
+                            <div class="d-flex align-items-center hover-pointer">
+                                <a href="{% url 'user:profile' prof.pk %}">
+                                    <img class="img-xs rounded-circle" src="{{ prof.profile_pic.url }}" alt="">
+                                </a>
+                                <div class="mx-2">
+                                    <a href="{% url 'user:profile' prof.pk %}">
+                                        <p class="mb-1"><b>{{prof|capfirst}}</b></p>
+                                    </a>
+                                    <input type="hidden" name="mutual_follow" value="{{prof.pk}}">
+                                    <p class="tx-11 mb-1 icon-num"> {{unfollowed}} Mutual Friends</p>
+                                </div>
+                            </div>
+                            <form action="{% url 'user:follow' request.user.pk %}" method="POST" id="follow_btn">
+                                {% csrf_token %}
+                                <input type="hidden" name="prof_pk" value="{{ prof.pk }}">
+                                <button id="follow" class="btn bottons follow-btn" type="submit" style="margin-left: 15px;">Follow</button>
+                            </form>
+                        </div>
+                    {% endfor %}
+                </div>
+            </div>
+         </div>
+    </div>
+</div>
+{% endblock %}

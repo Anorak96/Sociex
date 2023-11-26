@@ -1,0 +1,24 @@
+{% extends 'main/base.html' %}
+{% load static %}
+{% load widget_tweaks %}
+{% block title %} - Create Group {% endblock title %}
+{% block group %}<link rel="stylesheet" type="text/css" href="{% static 'main/group.css' %}">{% endblock %}
+
+{% block body %}
+<div class="container">
+    <div class="card-header"><h5 class="bold">Create Group</h5></div>
+    {{form.errors}}
+    <form action="" method="POST" enctype="multipart/form-data">
+        {% csrf_token %}
+        <label class="small mb-1 bold" for="inputCaption">Name</label>
+        {% render_field form.name class='form-control' %}
+        
+        <label class="small mb-1 bold" for="inputCaption">Description</label>
+        {% render_field form.description class='form-control' %}
+
+        <div class="modal-footer mt-1">
+            <button type="submit" class="btn bottons">Create</button>
+        </div>
+    </form>
+</div>
+{% endblock %}

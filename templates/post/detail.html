@@ -1,0 +1,129 @@
+{% extends "main/base.html" %}
+{% load widget_tweaks %}
+{% load static %}
+{% load custom_filters %}
+{% block title %} - Post Feed ({{post.pk}}){% endblock title %}
+<script type="text/javascript" src="{% static 'main/post.js' %}"></script>
+{% block post %}<link rel="stylesheet" type="text/css" href="{% static 'main/post.css' %}">{% endblock %}
+
+{% block body %}
+<div class="container mt-2">
+    <div class="mx-auto" id="{{post.pk}}" style="width: 670px;">
+        <div class="p-2 shad">
+            <div class="d-flex flex-row justify-content-between align-items-center p-2 border-bottom">
+                <div class="d-flex flex-row align-items-center feed-text px-2">
+                    <a href="{% url 'user:profile' post.user.pk %}">
+                        <img class="rounded-circle" src="{{ post.user.profile_pic.url }}" style="object-fit: cover; width: 50px; height: 50px;">
+                    </a>
+                    <div class="d-flex flex-column flex-wrap mx-2">
+                        <a href="{% url 'user:profile' post.user.pk %}">
+                            <span><b>{{post.user|capfirst}}</b></span>
+                        </a>
+                        <p class="icon-num">{{post.created_at|custom_timesince}}</p>
+                    </div>
+                </div>
+                {% if post.user == request.user %}
+                    <div class="px-2 dropdown">
+                        <button class="btn bottons dropdown feed-icon" type="button" data-bs-toggle="dropdown"  aria-expanded="false" aria-expanded="false">
+                            <i class="fa fa-ellipsis-v text-black-50"></i>
+                        </button>
+                        <ul class="dropdown-menu">
+                            <li><a class="btn dropdown-item" href="{% url 'post:delete' post.pk %}">Delete</a></li>
+                            <li><a class="btn dropdown-item" href="{% url 'post:post_update' post.pk %}">Update</a></li>
+                        </ul>
+                    </div>
+                {% endif %}
+            </div>
+            <div class="p-2 px-3">
+                {% if post.caption %}
+                    <span class="p-1 caption">{{post.caption}}</span><br>
+                {% endif %}
+                {% if post.post_images %}
+                    <div class="photo-grid">
+                        {% for image in post.post_images.all %}
+                            <div class="image-item">
+                                <img src="{{ image.image.url }}">
+                            </div>
+                        {% endfor %}
+                    </div>
+                {% endif %}
+            </div>
+            <div class="d-flex justify-content-start p-1 border-top">
+                <div class="btn" id="likeBTN">
+                    <input type="hidden" id="post_pk" value="{{post.pk}}">
+                    {% if request.user not in post.likes.all %}
+                        <i class="far fa-heart icon"></i>
+                    {% else %}
+                        <i class="fa fa-heart" style="color: red;"></i>
+                    {% endif %}
+                    <span class="icon-num" id="like_count">{{post.likes_no}}</span>
+                </div>
+                <div class="btn">
+                    <i class="fas fa-comments mx-1 icon"></i>
+                    <span class="icon-num">{{post.comment_no}}</span>
+                </div>
+                <div class="btn post-views">
+                    <i class="fa-solid fa-eye icon"></i>
+                    <span class="icon-num">{{post.post_view}}</span>
+                </div>
+            </div>
+        </div>
+        
+        <div class="p-2 shad">
+            <div class="card-header d-flex justify-content-center">
+            <b>Comments</b>
+            </div>
+            <div class="card-body p-1">
+                {% if comments %}
+                    {% for comment in comments %}
+                        <div class="shad">
+                            <div class="card-header d-flex justify-content-between border-bottom">
+                                <div class="d-flex">
+                                    <img class="rounded-circle" src="{{comment.user.profile_pic.url}}" alt="" style="height: 50px; width: 50px;">
+                                    <div class="d-flex flex-column ml-2">
+                                        <a href="{% url 'user:profile' post.user.pk %}">
+                                            <span><b>{{comment.user|capfirst}}</b></span>
+                                        </a>
+                                        <p class="icon-num">{{comment.created_at|custom_timesince}}</p>
+                                    </div>
+                                </div>
+
+                                {% if comment.user == request.user %}
+                                    <div class="px-2 dropdown ml-auto">
+                                        <button class="btn bottons dropdown feed-icon" type="button" data-bs-toggle="dropdown" aria-expanded="false"
+                                            aria-expanded="false">
+                                            <i class="fa fa-ellipsis-v text-black-50"></i>
+                                        </button>
+                                        <ul class="dropdown-menu">
+                                            <li><a class="btn dropdown-item" href="{% url 'post:comm_delete' comment.pk %}">Delete</a></li>
+                                            <li><a class="btn dropdown-item" href="{% url 'post:comm_update' comment.pk %}">Update</a></li>
+                                        </ul>
+                                    </div>
+                                {% endif %}
+                            </div>
+                            <div class="card-body">
+                                <p class="caption">{{comment.comment}}</p>
+                            </div>
+                        </div>
+                    {% endfor %}
+                {% else %}
+                    <div class="d-flex justify-content-center align-items-center">
+                        <h4>Be the first to comment.</h4>
+                    </div>
+                {% endif %}
+            </div>
+        </div>
+        
+        <div class="p-2 shad">
+            <form action="{% url 'post:create_comment' %}" method="POST" id="comment_form">
+                {% csrf_token %}
+                <input type="hidden" name="post_comment" value="{{post.pk}}">
+                <div class="d-flex justify-content-center">
+                    {% render_field form.comment class='form-control' placeholder='Make a Comment.' %}
+                    <button type="submit" class="btn bottons"><i class="fas fa-location-arrow"></i></button>
+                </div>
+            </form>
+        </div>    
+    </div>
+</div>
+{% endblock %}
