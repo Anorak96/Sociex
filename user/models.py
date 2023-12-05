@@ -1,5 +1,7 @@
+from turtle import mode
 from django.db import models
 import os
+from PIL import Image
 from django.core.validators import FileExtensionValidator
 from uuid import uuid4
 from django.contrib.auth.models import BaseUserManager, AbstractBaseUser
@@ -54,7 +56,6 @@ class UserManager(BaseUserManager):
         mutuals_count = len(mutuals_list)
         return mutuals_count
     
-
 def get_profile_image(instance, filename):
     upload_to = '{}/{}/{}'.format('user', instance.pk, 'profile')
     ext = filename.split('.')[-1]
@@ -82,6 +83,7 @@ def get_default_cover_image():
 class User(AbstractBaseUser):
     email = models.EmailField(verbose_name='email address', max_length=40, unique=True)
     username = models.CharField(max_length=30, primary_key=True, unique=True, verbose_name='username')
+    bio = models.TextField(blank=True, null=True)
     follower = models.ManyToManyField("User", blank=True, related_name='followers') # people following profile
     following = models.ManyToManyField("User", blank=True, related_name='followings') # people profile is following 
     cover_pic = models.ImageField(upload_to=get_cover_image, default=get_default_cover_image, blank=True, null=True, validators=[FileExtensionValidator(['png', 'jpg', 'jpeg'])])
@@ -101,6 +103,15 @@ class User(AbstractBaseUser):
 
     def __str__(self):
         return f"{self.username}"
+    
+    def save(self, *args, **kwargs):
+        super().save(*args, **kwargs)
+        
+        img = Image.open(self.profile_pic.path)
+        if img.height > 250 or img.width > 250:
+            size = (250, 250)
+            img.thumbnail(size)
+            img.save(self.profile_pic.path)
 
     def get_absolute_url(self):
         return reverse('user:profile', kwargs={"pk": self.pk})

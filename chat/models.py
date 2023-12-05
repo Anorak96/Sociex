@@ -1,3 +1,4 @@
+from mailbox import Message
 from django.db import models
 import os
 from django.core.validators import FileExtensionValidator
@@ -14,6 +15,7 @@ def get_message_image(instance, filename):
     return os.path.join(upload_to, filename)
 
 class Chat(models.Model):
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
     sender_user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='chat_sender')
     receiver_user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='chat_receiver')
     body = models.TextField(max_length=1000, blank=True, null=True)
@@ -22,55 +24,45 @@ class Chat(models.Model):
 
     def __str__(self):
         return f"{self.sender_user} sent {self.body[0:20]} to {self.receiver_user}" # type: ignore
-    
+
     class Meta:
         ordering = ('-date',)
 
-    def save(self, *args, **kwargs):
-        self.date = datetime.datetime.now()
-        super(Chat, self).save(*args, **kwargs)
-    
     def get_absolute_url(self):
         return reverse('chat:chat_detail', kwargs={"pk": self.pk})
+
+    def sender_message(from_user, to_user, body):
+        sender_message = Chat(
+            user=from_user, 
+            from_user=from_user, 
+            receiver_user=to_user,
+            body=body,
+            read=True
+        )
+        sender_message.save()
+
+        receiver_message = Chat(
+            user=to_user,
+            sender_user=from_user,
+            receiver_user=from_user,
+            body=body,
+            read=True
+        )
+        receiver_message.save()
+
+        return sender_message
+
+    def get_message(user):
+        users = []
+        messages = Chat.objects.filter(user=user).values('receiver_user').annotate(last=Max("date")).order_by("-last")
+        for message in messages:
+            users.append({
+                'user': User.objects.get(pk=message['receiver_user']),
+                'last': message['last'],
+                'unread': Chat.objects.filter(user=user, receiver_user__pk=message['receiver_user'], read=False).count()
+            })
+        return users
     
-    def get_all_messages(sender, receiver): # type: ignore
-        messages = []
-        # get messages between the two users, sort them by date(reverse) and add them to the list
-        message1 = Chat.objects.filter(sender_id=sender, recipient_id=receiver).order_by('-date') # get messages from sender to recipient
-        for x in range(len(message1)):
-            messages.append(message1[x])
-        message2 = Chat.objects.filter(sender_id=receiver, recipient_id=sender).order_by('-date') # get messages from recipient to sender
-        for x in range(len(message2)):
-            messages.append(message2[x])
-
-        # because the function is called when viewing the chat, we'll return all messages as read
-        for x in range(len(messages)):
-            messages[x].is_read = True
-        # sort the messages by date
-        messages.sort(key=lambda x: x.date, reverse=False)
-        return messages
-    
-    def get_message_list(u): # type: ignore
-        # get all the messages
-        m = []  # stores all messages sorted by latest first
-        j = []  # stores all usernames from the messages above after removing duplicates
-        k = []  # stores the latest message from the sorted usernames above
-        for message in Chat.objects.all():
-            for_you = message.receiver_user == u  # messages received by the user
-            from_you = message.sender_user == u  # messages sent by the user
-            if for_you or from_you:
-                m.append(message)
-                m.sort(key=lambda x: x.sender_user.username)  # sort the messages by senders
-                m.sort(key=lambda x: x.date, reverse=True)  # sort the messages by date
-
-        # remove duplicates usernames and get single message(latest message) per username(other user) (between you and other user)
-        for i in m:
-            if i.sender_user.username not in j or i.receiver_user.username not in j:
-                j.append(i.sender_user.username)
-                j.append(i.receiver_user.username)
-                k.append(i)
-        return k
-
 class Image(models.Model):
    chat = models.ForeignKey(Chat, on_delete=models.CASCADE, related_name='chat_images')
    image = models.ImageField(upload_to=get_message_image, blank=True, null=True, validators=[FileExtensionValidator(['png', 'jpg', 'jpeg'])])

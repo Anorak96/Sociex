@@ -225,5 +225,11 @@ hr{
 .follow{
     background-color: #4A5B6A !important; 
     border: 1px solid #263A47;
-
+}
+label{
+    font-weight: bolder;
+    color: #FFA586;
+}
+.padding-left {
+    padding-left: 4px;
 }

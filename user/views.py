@@ -172,8 +172,7 @@ class FollowingView(LoginRequiredMixin, generic.View):
         followings = profiles.get_following()
         users = User.objects.get_user_to_follow(pk=request.user.pk) # type: ignore
         photos= Image.objects.filter(post__user=pk).order_by('post')
-
-
+        
         context = {
             'followings': followings,
             'profiles' : profiles,   

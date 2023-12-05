@@ -82,19 +82,19 @@
                                 <i class="fas fa-photo-video"></i>
                                 <a class="pt-1px d-none d-md-block" href="{% url 'user:profile' profiles.pk %}"> Timeline</a>
                             </li>
-                            <li class="header-link-item ms-2 border-left d-flex align-items-center">
+                            <li class="header-link-item ms-2 border-left d-flex align-items-center padding-left">
                                 <i class="fas fa-users"></i>
                                 <a class="pt-1px d-none d-md-block" href="{% url 'user:following' profiles.pk %}">Following 
                                     <span style="color: white;">{{profiles.get_followering_no}}</span>
                                 </a>
                             </li>
-                            <li class="header-link-item ms-2 border-left d-flex align-items-center">
+                            <li class="header-link-item ms-2 border-left d-flex align-items-center padding-left">
                                 <i class="fas fa-users"></i>
                                 <a class="pt-1px d-none d-md-block" href="{% url 'user:follower' profiles.pk %}">Followers
                                     <span style="color: white;">{{profiles.get_follower_no}}</span>
                                 </a>
                             </li>
-                            <li class="header-link-item ms-2 border-left d-flex align-items-center">
+                            <li class="header-link-item ms-2 border-left d-flex align-items-center padding-left">
                                 <i class="far fa-image"></i>
                                 <a class="pt-1px d-none d-md-block" href="#">Photos</a>
                             </li>

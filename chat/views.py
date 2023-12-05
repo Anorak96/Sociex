@@ -19,24 +19,27 @@ class ChatView(LoginRequiredMixin, generic.View):
     # context data for latest message to display
     def get(self, request):
         form = ChatForm()
-        user = User.objects.get(pk=self.request.user.pk)  # get your primary key
-        messages = Chat.get_message_list(user) # get all messages between you and the other user # type: ignore
+        loggedin = request.user
+        messages = Chat.get_message(user=loggedin)
+        active_direct = None
+        direct = None
 
-        other_users = [] # list of other users
+        if messages:
+            message = messages[0]
+            active_direct = message['user'].pk
+            directs = Chat.objects.filter(user=loggedin, receiver_user=message['user'])
+            directs.update(read=True)
 
-        # getting the other person's name fromthe message list and adding them to a list
-        for i in range(len(messages)):
-            if messages[i].sender_user != user:
-                other_users.append(messages[i].sender_user)
-            else:
-                other_users.append(messages[i].receiver_user)
+            for message in messages:
+                if message['user'].pk == active_direct:
+                    message['unread'] = 0
 
-        messages_list = messages
         context={
-            'ichat' : messages_list,
-            'other_users' : other_users,
-            'form' : form,
-            
+            'form': form,
+            'active_direct': active_direct,
+            'messages': messages,
+            'direct': direct,
+            'loggedin': loggedin,
         }
         return render(request, self.template_name, context)
     
@@ -49,25 +52,33 @@ class ChatMessageView(LoginRequiredMixin, generic.View):
 
     def get(self, request, pk):
         form = ChatForm()
-        uchat = Chat.objects.get(pk=pk)
-        user = User.objects.get(pk=self.request.user.pk)  # get your primary key
-        messages = Chat.get_message_list(user) # get all messages between you and the other user # type: ignore
+        loggedin = request.user
+        messages = Chat.get_message(user=loggedin)
+        active_directs = pk
 
-        other_users = [] # list of other users
+        directs = []
+        direct_send = Chat.objects.filter(user=loggedin, receiver_user__pk=pk)
+        direct_send.update(read=True)
+        directs.append(direct_send)
 
-        # getting the other person's name fromthe message list and adding them to a list
-        for i in range(len(messages)):
-            if messages[i].sender_user != user:
-                other_users.append(messages[i].sender_user)
-            else:
-                other_users.append(messages[i].receiver_user)
+        direct_receive = Chat.objects.filter(user=pk, receiver_user__pk=loggedin.pk)
+        direct_receive.update(read=True)
+        directs.append(direct_receive)
 
-        messages_list = messages
+        for message in messages:
+            if message['user'].pk == pk:
+                message['unread'] = 0
+
         context={
-            'ichat' : messages_list,
-            'other_users' : other_users,
-            'uchat' : uchat,
-            'form' : form,
-            
+            'form': form,
+            'active_directs': active_directs,
+            'messages': messages,
+            'directs': directs,
+            'loggedin': loggedin,
         }
         return render(request, self.template_name, context)
+    
+class SendMessage(LoginRequiredMixin, generic.View):
+
+    def post(self, request):
+        from_user = request.user

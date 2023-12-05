@@ -3,7 +3,6 @@ from django.utils.timesince import timesince
 from datetime import datetime, timedelta
 from django.utils import timezone
 
-
 register = template.Library()
 
 @register.filter(name='custom_timesince')

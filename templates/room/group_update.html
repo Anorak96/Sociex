@@ -1,0 +1,48 @@
+{% extends 'main/base.html' %}
+{% load widget_tweaks %}
+{% load static %}
+{% block title %} - Update Group {% endblock title %}
+{% block post %}<link rel="stylesheet" type="text/css" href="{% static 'main/group.css' %}">{% endblock %}
+
+{% block body %}
+<div class="container-fluid">
+    <form action="" method="POST">
+        {% csrf_token %}
+        <!-- Post details card-->
+        <div class="card mb-4">
+            <div class="card-header">Group Details</div>
+            {% if form.errors %}
+                {% for message in form.errors %}
+                    <p class="text-muted text-center mt-1 mb-1" style="color: red!important;">{{message}}</p>
+                {% endfor %}
+            {% endif %}
+            <div class="card-body row">
+                <!-- Form Group (Caption)-->
+                <div class="mb-3 col-6">
+                    <label class="small mb-1 bold" for="inputCaption">Name</label>
+                    {% render_field form.name class='form-control' %}
+                
+                    <label class="small mb-1 bold" for="inputCaption">Description</label>
+                    {% render_field form.description class='form-control' %}
+                    
+                    <label class="small mb-1 bold" for="inputCaption">Created By</label>
+                    {% render_field form.created_by class='form-control' %}
+                </div>
+                <div class="mb-3 col-3">
+                    <label class="small mb-1 bold" for="inputCaption">Moderators</label>
+                    {% render_field form.mods class='form-control' %}
+                </div>
+                <div class="mb-3 col-3">
+                    <label class="small mb-1 bold" for="inputCaption">Members</label>
+                    {% render_field form.members class='form-control' %}
+                </div>
+                <!-- Save changes button-->
+            </div>
+            <div class="card-body">
+                <button class="btn bottons" type="submit">Save changes</button>
+                <button type="button" id="submit" name="submit" class="btn btn-secondary" value="Previous Page" onClick="javascript:history.go(-1);">Cancel</button>
+            </div>
+        </div>
+    </form>
+</div>
+{% endblock %}

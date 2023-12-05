@@ -15,9 +15,13 @@
 }
 .chat-image img {
     width: 100%;
-    height: 93%;
+    height: 100%;
     object-fit: cover;
 }
+/* .chat-image img:hover{
+    transform: translateY(5px) scale(1.4);
+    object-fit: contain !important;
+} */
 .chat-list {
     box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
 }

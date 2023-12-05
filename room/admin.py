@@ -1,6 +1,10 @@
 from django.contrib import admin
 from .models import Group, Message
 
+class MessageInline(admin.TabularInline):
+    model = Message
+    extra = 3
+
 @admin.register(Group)
 class GroupAdmin(admin.ModelAdmin):
     list_display = ('name', 'created_by', 'description', 'created_at')
@@ -14,7 +18,7 @@ class GroupAdmin(admin.ModelAdmin):
     )
     filter_horizontal = ()
     readonly_fields = ['created_at',]
-
+    inlines = [MessageInline]
 
 @admin.register(Message)
 class MessageAdmin(admin.ModelAdmin):

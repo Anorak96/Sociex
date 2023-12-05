@@ -7,13 +7,13 @@ class imageInline(admin.TabularInline):
 
 @admin.register(Chat)
 class ChatAdmin(admin.ModelAdmin):
-    list_display = ('date', 'body', 'sender_user', 'receiver_user')
+    list_display = ('user', 'body', 'sender_user', 'receiver_user', 'date')
     fieldsets = (
         (None, {
-            "fields": ('sender_user', 'receiver_user', 'body', 'date', 'read'),
+            "fields": ('user', 'sender_user', 'receiver_user', 'body', 'date', 'read'),
         }),
     )
-    list_filter = ('sender_user', 'receiver_user', 'date',)
+    list_filter = ('user', 'sender_user', 'receiver_user', 'date',)
     readonly_fields = ('date',)
     ordering = ('-date',)
     inlines = [imageInline]

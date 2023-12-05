@@ -11,7 +11,7 @@ def get_post_image(instance, filename):
     upload_to = '{}/{}/{}'.format('user', instance.post.user, 'post')
     ext = filename.split('.')[-1]
     date = instance.post.created_at.strftime('%Y%m%d%H%M%S')
-    filename = '{}_{}_{}{}.{}'.format(instance.post.user, 'post', date, uuid4().hex, ext)
+    filename = '{}_{}_{}.{}'.format(instance.post.user, 'post', date, ext)
     return os.path.join(upload_to, filename)
 
 # Model Manager Feeds
@@ -20,7 +20,7 @@ class Post(models.Model):
     caption = models.TextField(max_length=1500, blank=True)
     likes = models.ManyToManyField(User, related_name='post_like', blank=True)
     created_at = models.DateTimeField(auto_now=True)
-    post_view = models.PositiveIntegerField(default=0)
+    post_view = models.PositiveIntegerField(default=0, blank=True, null=True)
     
     # objects: PostManager()
 
@@ -39,9 +39,6 @@ class Post(models.Model):
     
     def comment_no(self):
         return self.comment_post.count() # type: ignore
-
-    def get_comments(self):
-        return self.comment_post.all()[0:1] # type: ignore
         
     def get_absolute_url(self):
         return reverse('post:detail', kwargs={"pk": self.pk})

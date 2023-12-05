@@ -13,73 +13,74 @@
         </div>
         <hr>
         <div class="mt-3">
-            {% for chat in ichat %}
-                {% for us in other_users %}
-                    {% if us.pk == chat.receiver_user.pk or us.pk == chat.sender_user.pk  %}
-                        <a href="{% url 'chat:chat_detail' chat.id %}">
-                            <input type="hidden" name="chat_id" value="{{ chat.id }}">
-                            <div class="chat-list p-2">
-                                <input type="hidden" name="chat_pk" value="{{ us.pk }}" id="chat_pk">
-                                <img src="{{ us.profile_pic.url }}" width="50" style="border-radius: 50%;">
-                                <span><b>{{us}}</b></span>
-                            </div>
-                        </a>
-                        <hr><hr>
-                    {% endif %}
-                {% endfor %}
+            {% for chat in messages %}
+                <a href="{% url 'chat:chat_detail' chat.user %}">
+                    <input type="hidden" name="chat_id" value="{{ chat.id }}">
+                    <div class="chat-list p-2 active">
+                        <input type="hidden" name="chat_pk" value="{{ chat.pk }}" id="chat_pk">
+                        <img src="{{ chat.user.profile_pic.url }}" width="50" style="border-radius: 50%;">
+                        <span><b>{{chat.user}}</b></span>
+                        {{chat.unread}}
+                    </div>
+                </a>
+                
+                <hr><hr>
             {% endfor %}
         </div>
     </div>
 
     <div class="messages">
-        {% if uchat %}
-            <div style="height: 520px !important;">
-                {% if uchat.sender_user == request.user %}
-                    <div class='d-flex justify-content-end flex-row mt-1'>
-                        <div class="d-flex flex-column me-2">
-                            <a href="{% url 'user:profile' uchat.sender_user.pk %}">
-                                <span class="d-flex justify-content-end"><b>{{uchat.sender_user|capfirst}}</b></span>
-                            </a>
-                            <span class="d-flex justify-content-end" style="font-size: 11px; color: greenyellow;">sent</span>
-                            <p>{{uchat.date|custom_timesince}}</p>
-                        </div> 
-                        <div>
-                            <img src="{{ uchat.sender_user.profile_pic.url }}" alt="avatar" class="d-flex align-self-center" width="60" style="border-radius: 50%;">
-                        </div>
-                    </div>
-                {% else %}
-                    <div class='d-flex justify-content-start flex-row mt-1'>
-                        <div>
-                            <img src="{{ uchat.sender_user.profile_pic.url }}" alt="avatar" class="d-flex align-self-center me-2" width="60" style="border-radius: 50%;">
-                        </div>
-                        <div class="d-flex flex-column">
-                            <a href="">
-                                <span><b>{{uchat.sender_user|capfirst}}</b></span>
-                            </a>
-                            <span  class="d-flex justify-content-start" style="font-size: 11px; color: greenyellow;">received</span>
-                            <p>{{uchat.date}}</p>
-                        </div>
-                    </div>
-                {% endif %}
-                <hr>
-                <div style="height: 395px !important;">
-                    {% if uchat.body %}
-                        <p>{{uchat.body}}</p>
-                    {% endif %}
-                    {% if uchat.chat_images.all %}
-                        <div class="image-grid" style="overflow-y: auto; max-height: 395px;">
-                            {% for image in uchat.chat_images.all %}
-                                <div class="chat-image">
-                                    <img src="{{ image.image.url }}">
+        {% if directs %}
+            {% for chats in directs %}
+                {% for chat in chats %}
+                    <div class="border-bottom">
+                        {% if chat.sender_user == request.user %}    
+                            <div class='d-flex justify-content-end flex-row mt-1'>
+                                <div class="d-flex flex-column me-2">
+                                    <a href="">
+                                        <span class="d-flex justify-content-end"><b>{{chat.sender_user|capfirst}}</b></span>
+                                    </a>
+                                    <span class="d-flex justify-content-end" style="font-size: 11px; color: greenyellow;">sent</span>
+                                    <p>{{chat.date}}</p>
+                                </div> 
+                                <div>
+                                    <img src="{{ chat.sender_user.profile_pic.url }}" alt="avatar" class="d-flex align-self-center" width="60" style="border-radius: 50%;">
                                 </div>
-                            {% endfor %}
-                        </div>
-                    {% endif %}
-                </div>
+                            </div>
+                        {% else %}
+                            <div class='d-flex justify-content-start flex-row mt-1'>
+                                <div>
+                                    <img src="{{ chat.sender_user.profile_pic.url }}" alt="avatar" class="d-flex align-self-center mx-2" width="60" style="border-radius: 50%;">
+                                </div>
+                                <div class="d-flex flex-column me-2">
+                                    <a href="">
+                                        <span class="d-flex justify-content-start"><b>{{chat.sender_user|capfirst}}</b></span>
+                                    </a>
+                                    <span class="d-flex justify-content-start" style="font-size: 11px; color: greenyellow;">receieved</span>
+                                    <p>{{chat.date}}</p>
+                                </div> 
+                            </div>
+                        {% endif %}
+                        <hr style="margin: 0px !important;">
+                        {% if chat.body %}
+                            <p>{{chat.body}}</p>
+                        {% endif %}
+                        {% if chat.chat_images.all %}
+                            <div class="image-grid" style="overflow-y: auto; max-height: 368px;">
+                                {% for image in chat.chat_images.all %}
+                                    <div class="chat-image">
+                                        <img src="{{ image.image.url }}">
+                                    </div>
+                                {% endfor %}
+                            </div>
+                        {% endif %}
+                    </div>
+                {% endfor %}
+            {% endfor %}
         {% else %}
-            <p align="center" style="height: 395px;">No new Messages.</p>
+            <p align="center" style="height: 484px;">No new Messages.</p>
         {% endif %}
-        <hr>
+
         <hr style="margin: 0px !important;">
         <div class="mt-2" style="position: relative;">
             <form action="" method="POST" id="chatform" class="">

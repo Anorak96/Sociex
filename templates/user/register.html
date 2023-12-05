@@ -14,7 +14,10 @@
             {% csrf_token %}
             <div class="form-group">
                 
-                <label for="id_username" class="mb-0">Username</label>
+                <div class="d-flex flex-row">
+                    <label for="id_username" class="mb-0">Username</label> 
+                    <small class="d-flex justify-content-end" style="color: maroon;">It cannot be changed.</small>
+                </div>
                 <input type="text" class="form-control" name="username" maxlength="30" required="" id="id_username" />
                 {{ form.username.errors }}
             </div>

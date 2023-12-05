@@ -5,6 +5,7 @@ app_name = 'post'
 urlpatterns = [
     path('', views.PostListView.as_view(), name='posts'),
     path('post/<pk>/', views.PostDetailView.as_view(), name='detail'),
+    path('post/<pk>/like', views.LikeView.as_view(), name='like'),
     path('create/', views.PostCreate.as_view(), name='create_post'),
     path('create_comment/', views.CommentCreate.as_view(), name='create_comment'),
     path('post/<pk>/delete/', views.PostDeleteView.as_view(), name='delete'),

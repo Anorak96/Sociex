@@ -42,6 +42,9 @@
 }
 hr{
     color:white;
-    margin-top: 3px;
-    margin-bottom: 3px;
+    margin-top: 2px !important;
+    margin-bottom: 2px !important;
+}
+.card{
+    margin-bottom: 0px !important;
 }

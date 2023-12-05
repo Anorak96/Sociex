@@ -35,6 +35,13 @@ class ImageForm(forms.ModelForm):
         model = Image
         fields = ('image',)
 
+    def clean_images(self):
+        images = self.cleaned_data["images"]
+        if images:
+            if len(images) > 4:
+                raise forms.ValidationError("Maximum limit of 4 image reached")
+        return images
+    
 class CommentForm(forms.ModelForm):
     comment = forms.CharField(widget=forms.Textarea(attrs={'rows':2, 'style': 'padding: 10px; resize: none; margin-right:9px;'}), required=False)
     class Meta:

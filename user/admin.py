@@ -8,7 +8,7 @@ class UserAdmin(BaseUserAdmin):
     list_display = ('username', 'email', 'date_joined', 'last_login', 'is_admin', 'is_active')
     list_filter = ('is_admin',)
     fieldsets = (
-        ('Info', {'fields': ('email', 'username', 'password', 'date_joined')}),
+        ('Info', {'fields': ('email', 'username', 'bio', 'password', 'date_joined')}),
         ('Pictures', {'fields': ('profile_pic', 'cover_pic')}),
         ('Relationship', {'fields': ('follower', 'following')}),
         ('Permissions', {'fields': ('is_admin', 'is_active', 'is_superuser', 'is_staff')}),

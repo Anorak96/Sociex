@@ -7,10 +7,10 @@
 <div class="container-fluid">
     <section>
         <div class="d-flex justify-content-end">
-            <a href="{% url 'room:create' %}" class="btn btn-primary">Create Group</a>
+            <a href="{% url 'room:create' %}" class="btn btn-primary"> <i class="fas fa-plus"></i> Create Group</a>
         </div>
     </section>
-    <section class="basic-grid mt-1 ">
+    <section class="basic-grid mt-2">
         <div class="card feed">
             {% for group in groups %}
                 <a href="{% url 'room:group' group.pk %}">
@@ -32,17 +32,32 @@
                             {{mssage.room}}
                         </a>
                     </h5>
-                    <div class="d-flex flex-row mt-2">
-                        <a href="{% url 'user:profile' mssage.user.pk %}">
-                            <img class="rounded-circle" src="{{ mssage.user.profile_pic.url }}" style="object-fit: cover; width: 40px; height: 40px;">
-                        </a>
-                        <div class="d-flex flex-column mx-2">
-                            <a href="{% url 'user:profile' mssage.user.pk %}">{{mssage.user}}</a> 
-                            <span>{{mssage.created_at}}</span>
+                    <div class="d-flex flex-row justify-content-between align-items-center">
+                        <div class="d-flex flex-row align-items-center feed-text">
+                            <a href="{% url 'user:profile' mssage.user.pk %}">
+                                <img class="rounded-circle" src="{{ mssage.user.profile_pic.url }}" style="object-fit: cover; width: 40px; height: 40px;">
+                            </a>
+                            <div class="d-flex flex-column flex-wrap mx-2">
+                                <a href="{% url 'user:profile' mssage.user.pk %}">
+                                    <span>{{mssage.user|capfirst}}</span>
+                                </a>
+                                <p class="tx-11 m-0 icon-num">{{mssage.created_at}}</p>
+                            </div>
                         </div>
+                        {% if mssage.user == request.user %}
+                            <div class="px-2 dropdown">
+                                <button class="btn bottons dropdown feed-icon" type="button" data-bs-toggle="dropdown"  aria-expanded="false" aria-expanded="false">
+                                    <i class="fa fa-ellipsis-v text-black-50"></i>
+                                </button>
+                                <ul class="dropdown-menu">
+                                    <li><a class="btn dropdown-item" href="{% url 'room:message_delete' mssage.pk %}">Delete</a></li>
+                                    <li><a class="btn dropdown-item" href="{% url 'room:message_update' mssage.pk %}">Update</a></li>
+                                </ul>
+                            </div>
+                        {% endif %}
                     </div>
                     <hr>
-                    <p>{{mssage.body}}</p>
+                    <p class="px-3">{{mssage.body}}</p>
                 </div>
             {% endfor %}
         </div>

@@ -1,5 +1,6 @@
 from typing import Any
 from django.shortcuts import render, redirect, get_object_or_404
+from django.http import JsonResponse
 from django.utils import timezone
 from django.urls import reverse_lazy, reverse
 from django.views import generic
@@ -213,4 +214,19 @@ class CommentUpdateView(LoginRequiredMixin, UserPassesTestMixin, generic.UpdateV
         pk_ = self.kwargs.get("pk")
         comment = Comment.objects.get(pk=pk_)
         return comment.user == self.request.user
-    
+
+class LikeView(LoginRequiredMixin, generic.View):
+    model = Post
+    template_name = 'post/post.html'
+    login_url = 'user:login'
+    redirect_field_name = 'redirect_to'
+
+    def post(self, request, *args, **kwargs):
+        pk_ = self.kwargs.get("pk")
+        post = Post.objects.get(pk=pk_)
+        user = self.request.user
+        if user in post.likes:
+            post.likes.remove(user)
+        else:
+            post.likes.add(user)
+        return JsonResponse({'status':'success'})

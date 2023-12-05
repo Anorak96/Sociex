@@ -1,0 +1,12 @@
+{% extends "admin/edit_inline/tabular.html" %}
+
+{% block field_contents %}
+    <h3>Post images</h3>
+    {% if inline_admin_form.original or inline_admin_form.show_url %}
+        {{ field.contents }}
+    {% else %}
+        {% with inline_admin_form.form.image as img %}
+            <img src="{{ img.url }}" alt="{{ img.name }}" style="max-height: 100px; max-width: 100px;">
+        {% endwith %}
+    {% endif %}
+{% endblock %}

@@ -5,16 +5,51 @@
 {% block group %}<link rel="stylesheet" type="text/css" href="{% static 'main/group.css' %}">{% endblock %}
 
 {% block body %}
-    <div class="p-2 shad message-form" style="display: flex; justify-content: end;">
-        <form action="{% url 'room:create_message' %}" method="POST" id="message_form">
-            {% csrf_token %}
-            <input type="hidden" name="group_message" value="{{group.pk}}">
-            <div class="d-flex justify-content-center">
-                {{form.body}}
-                {% render_field form.body class='form-control' placeholder='Make a Comment.' %}
-                <button type="submit" class="btn bottons"><i class="fas fa-location-arrow"></i></button>
+    <div class="d-flex flex-row" style="justify-content: space-between;">
+        <div class="p-2 message-form d-flex justify-content-center">
+            <form id="message_form">
+                {% csrf_token %}
+                <input type="hidden" name="group_message" id="group_message" value="{{group.pk}}">
+                <div class="d-flex justify-content-center">
+                    {% render_field form.body class='form-control' placeholder='Make a Post.' id="message" %}
+                    <button type="submit" class="btn bottons mx-2"><i class="fas fa-location-arrow"></i></button>
+                </div>
+            </form>
+        </div> 
+        <h5 class="text-success text-center"></h5>
+        {% if messages %}
+            {% for message in messages %}
+                <p class="text-muted text-center mt-1 mb-1" style="color: red!important;">{{message}}</p>
+            {% endfor %}
+        {% endif %}
+        <div class="p-2 message-form d-flex justify-content-start flex-row">
+            <div class="mx-1">
+                {% if group.created_by == request.user %}
+                    <a href="{% url 'room:group_delete' group.pk %}" class="btn btn-danger">Delete Group</a>
+                {% endif %}
             </div>
-        </form>
+            <div class="mx-1">
+                {% if group.created_by == request.user %}
+                    <a href="{% url 'room:group_update' group.pk %}" class="btn btn-primary">Update Group</a>
+                {% endif %}
+            </div>
+            <div class="mx-1">
+                {% if request.user in group.members.all %}
+                    <form action="{% url 'room:group_leave' group.pk %}" method="POST" id="join_form">
+                        {% csrf_token %}
+                        <input type="hidden" name="group_pk" value="{{ group.pk }}">
+                        <button id="leave" class="btn btn-danger" type="submit">Leave</button>
+                    </form>
+                {% else %}
+                    <form action="{% url 'room:group_join' group.pk %}" method="POST" id="join_form">
+                        {% csrf_token %}
+                        <input type="hidden" name="group_pk" value="{{ group.pk }}">
+                        <button id="join" class="btn btn-primary" type="submit">Join</button>
+                    </form>
+                {% endif %}
+                
+            </div>
+        </div>
     </div>
     <section class="group-grid mt-4 container-fluid">
         <div class="card feed px-2">
@@ -25,18 +60,37 @@
         <div class="card feed px-2">
             <h5 class="center mb-0">Conservations</h1><hr class="my-2">
             {% for mssage in group.message_room.all %}
-                <div class="card group-feed px-2 message mb-2 ">
-                    <div class="d-flex flex-row mt-2">
-                        <img class="rounded-circle" src="{{ mssage.user.profile_pic.url }}" style="object-fit: cover; width: 40px; height: 40px;">
-                        <div class="d-flex flex-column mx-2">
-                            <a href="{% url 'user:profile' mssage.user.pk %}">{{mssage.user}}</a> 
-                            <span>{{mssage.created_at}}</span>
+                <div class="card group-feed p-2 message mb-2">
+                    <div class="d-flex flex-row justify-content-between align-items-center">
+                        <div class="d-flex flex-row align-items-center feed-text px-2">
+                            <a href="{% url 'user:profile' mssage.user.pk %}">
+                                <img class="rounded-circle" src="{{ mssage.user.profile_pic.url }}" style="object-fit: cover; width: 50px; height: 50px;">
+                            </a>
+                            <div class="d-flex flex-column flex-wrap mx-2">
+                                <a href="{% url 'user:profile' mssage.user.pk %}">
+                                    <span>{{mssage.user|capfirst}}</span>
+                                </a>
+                                <p class="tx-11 m-0 icon-num">{{mssage.created_at}}</p>
+                            </div>
                         </div>
+                        {% if mssage.user == request.user %}
+                            <div class="px-2 dropdown">
+                                <button class="btn bottons dropdown feed-icon" type="button" data-bs-toggle="dropdown"  aria-expanded="false" aria-expanded="false">
+                                    <i class="fa fa-ellipsis-v text-black-50"></i>
+                                </button>
+                                <ul class="dropdown-menu">
+                                    <li><a class="btn dropdown-item" href="{% url 'room:message_delete' mssage.pk %}">Delete</a></li>
+                                    <li><a class="btn dropdown-item" href="{% url 'room:message_update' mssage.pk %}">Update</a></li>
+                                </ul>
+                            </div>
+                        {% endif %}
                     </div>
                     <hr>
-                    <p>{{mssage.body}}</p>
+                    <div>
+                        <p class="px-2">{{mssage.body}}</p>
+                    </div>
                 </div>
-            {% endfor %} 
+            {% endfor %}
         </div>
         
         <div class="card feed px-2 pb-2">
@@ -44,10 +98,35 @@
             {% for user in group.members.all %}
                 <div class="d-flex flex-row mt-2 p-2" style="box-shadow: 0 0px 1px 0 rgb(33, 60, 83);">
                     <img class="rounded-circle" src="{{ user.profile_pic.url }}" style="object-fit: cover; width: 30px; height: 30px;">
-                    <span class="mx-1"><a href="{% url 'user:profile' user.pk %}">{{user.username}}</a> {% if user in group.mods.all %} <span style="color: greenyellow; font-size: 10px;"> Moderator </span>{% endif %}</span> 
+                    <span class="mx-1">
+                        <a href="{% url 'user:profile' user.pk %}">{{user}}</a> 
+                        {% if user in group.mods.all %} 
+                            <span style="color: greenyellow; font-size: 10px;"> Moderator </span>
+                        {% endif %}
+                    </span> 
                     <br>
                 </div>
             {% endfor %}
         </div>
     </section>
+    <script type="text/javascript">
+        $(document).on('submit', '#message_form', function (e) {
+            e.preventDefault();
+            $.ajax({
+                type: 'POST',
+                url: 'message/',
+                data: {
+                    message: $('message').val(),
+                    group_pk: $('group_message').val(),
+                    csrfmiddlewaretoken: $('input[name=csrfmiddlewaretoken]').val()
+                },
+                success: function(data) {
+                    $(h5).html(data)
+                    console.log('success')
+                    console.log(data)
+                }
+            })
+        })
+    </script>
+{% block group_js %}<link rel="stylesheet" type="text/css" href="{% static 'main/group.js' %}">{% endblock %}
 {% endblock %}

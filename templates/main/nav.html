@@ -36,22 +36,22 @@
             </li>
             {% if request.user.is_authenticated %}
                 <li class="nav-item me-2">
-                    <a class="nav-link" href="{% url 'post:create_post' %}">
+                    <a class="nav-link px-1" href="{% url 'post:create_post' %}">
                         <span><i class="fas fa-plus-circle fa-lg"></i> Post</span>
                     </a>
                 </li>
                 <li class="nav-item me-2">
-                    <a class="nav-link" href="{% url 'chat:chat_index' %}">
+                    <a class="nav-link  px-1" href="{% url 'chat:chat_index' %}">
                         <span><i class="fas fa-message fa-lg"></i></span>
                     </a>
                 </li>
                 <li class="nav-item me-2">
-                    <a class="nav-link" href="{% url 'room:groups' %}">
+                    <a class="nav-link px-1" href="{% url 'room:groups' %}">
                         <span><i class="fas fa-users fa-lg"></i></span>
                     </a>
                 </li>
                 <li class="nav-item me-2">
-                    <a class="nav-link hidden-arrow" href="#">
+                    <a class="nav-link hidden-arrow px-1" href="#">
                         <i class="fas fa-bell fa-lg"></i>
                         <span class="badge rounded-pill badge-notification bg-danger">12</span>
                     </a>
