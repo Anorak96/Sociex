@@ -12,6 +12,9 @@ $(document).on('submit', '#message_form', function (e) {
             $(h5).html(data)
             console.log('success')
             console.log(data)
+        },
+        error: function(error) {
+            console.log(error)
         }
     })
 })

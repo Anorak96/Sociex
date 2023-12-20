@@ -6,7 +6,7 @@
 .group-grid{
     display: grid;
     gap: 10px;
-    grid-template-columns: 1fr 2fr 1fr;
+    grid-template-columns: 4fr 1fr;
 }
 .card{
     border-radius: 5px;

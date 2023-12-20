@@ -1,6 +1,7 @@
 {% extends 'main/base.html' %}
 {% load widget_tweaks %}
 {% load static %}
+{% block title %} - {{profiles}}{% endblock title %}
 <script type="text/javascript" src="{% static 'main/user.js' %}"></script>
 {% block user %}<link rel="stylesheet" type="text/css" href="{% static 'main/user.css' %}">{% endblock %}
 

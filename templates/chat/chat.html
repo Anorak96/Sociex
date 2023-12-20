@@ -63,7 +63,7 @@
                         {% endif %}
                         <hr style="margin: 0px !important;">
                         {% if chat.body %}
-                            <p>{{chat.body}}</p>
+                            <p id="body">{{chat.body}}</p>
                         {% endif %}
                         {% if chat.chat_images.all %}
                             <div class="image-grid" style="overflow-y: auto; max-height: 368px;">
@@ -75,6 +75,7 @@
                             </div>
                         {% endif %}
                     </div>
+                    <hr class="border-bottom">
                 {% endfor %}
             {% endfor %}
         {% else %}
@@ -83,9 +84,9 @@
 
         <hr style="margin: 0px !important;">
         <div class="mt-2" style="position: relative;">
-            <form action="" method="POST" id="chatform" class="">
+            <form action="" method="POST" id="chatform" class="" data-url="{% url 'chat:send_message' %}">
                 {% csrf_token %}
-                <input type="hidden" name="receiver_user" value="{{uchat}}">
+                <input type="hidden" name="receiver_user" id="receiver_user" value="{{active_directs}}">
                 <div class="d-flex justify-content-end flex-row"> 
                     {% render_field form.body class='form-control' placeholder='Send a Message.' %}
                     <button type="submit" class="btn bottons">

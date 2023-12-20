@@ -13,4 +13,7 @@ urlpatterns = [
     path('<pk>/following/', views.FollowingView.as_view(), name='following'),
     path('<pk>/follower/', views.FollowerView.as_view(), name='follower'),
 
+    path('search/', views.SearchResultsView.as_view(), name='search'),
+
+
 ]

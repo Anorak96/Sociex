@@ -45,6 +45,8 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    "django.contrib.sites",  # new
+    "django.contrib.sitemaps",  # new 
     'user',
     'chat',
     'post',
@@ -55,6 +57,7 @@ INSTALLED_APPS = [
     'debug_toolbar',
     'rest_framework',
 ]
+SITE_ID = 1
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',

@@ -1,5 +1,5 @@
 from django.contrib import admin
-from .models import Post, Comment, Image
+from .models import Post, Comment, Image, Tag
 
 class CommentInline(admin.TabularInline):
     model = Comment
@@ -13,12 +13,12 @@ class imageInline(admin.TabularInline):
 
 @admin.register(Post)
 class PostAdmin(admin.ModelAdmin):
-    list_display = ('user', 'caption', 'created_at', 'likes_count', 'post_view')
+    list_display = ('user', 'id', 'caption', 'created_at', 'likes_count', 'post_view')
     list_per_page = 20
-    list_filter = ('user', 'created_at',)
+    list_filter = ('user', 'created_at', 'tags',)
     search_fields = ('user', 'caption',)
     fieldsets = (
-        (None, {'fields': ('user', 'caption', 'likes', 'post_view')}),
+        (None, {'fields': ('user', 'caption', 'tags', 'likes', 'post_view')}),
     )
     filter_horizontal = ()
     readonly_fields = ['created_at',]
@@ -42,11 +42,9 @@ class ImageAdmin(admin.ModelAdmin):
     list_display = ('post', 'image_tag', 'image')
     list_filter = ('post',)
     list_per_page = 10
-
-    # def image(self, obj):
-    #     return mark_safe('<img src="{url}" width="{width}" height="{height}"/>'.format (
-    #         url = obj.image.url,
-    #         width = obj.image.width,
-    #         height = obj.image.height,
-    #     )
-    # )
+    
+@admin.register(Tag)
+class TagAdmin(admin.ModelAdmin):
+    list_display = ('tag',)
+    list_filter = ('tag',)
+    list_per_page = 20

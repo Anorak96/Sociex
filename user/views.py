@@ -11,6 +11,9 @@ from .models import User
 from django.http import JsonResponse
 from post.models import Post, Image, Comment
 from post.forms import ImageForm, PostForm, CommentForm
+from room.models import Group, Message
+from itertools import chain
+from django.db.models import Q
 
 class RegisterView(generic.View):
     template_name = 'user/register.html'
@@ -79,6 +82,7 @@ class UserDetailView(FormMixin, generic.DetailView):
         context['posts'] = Post.objects.filter(user=pk)
         context['form'] = PostForm()
         user = self.request.user.pk
+        context['followings'] = pk.get_following().exclude(pk=user)
         context['photos'] = Image.objects.filter(post__user=pk).order_by('post')
         context['users'] = User.objects.get_user_to_follow(pk=user) # type: ignore
         
@@ -168,13 +172,15 @@ class FollowingView(LoginRequiredMixin, generic.View):
     context_object_name = 'profiles'
 
     def get(self, request, pk):
-        profiles = User.objects.get(pk=request.user.pk)
-        followings = profiles.get_following()
+        profiles = User.objects.get(pk=pk)
+        followings = profiles.get_following().exclude(pk=request.user.pk)
+        following = profiles.get_following()
         users = User.objects.get_user_to_follow(pk=request.user.pk) # type: ignore
         photos= Image.objects.filter(post__user=pk).order_by('post')
         
         context = {
             'followings': followings,
+            'following': following,
             'profiles' : profiles,   
             'users' : users,
             'photos' : photos,
@@ -189,7 +195,7 @@ class FollowerView(LoginRequiredMixin, generic.View):
     context_object_name = 'profiles'
 
     def get(self, request, pk):
-        profiles = User.objects.get(pk=request.user.pk)
+        profiles = User.objects.get(pk=pk)
         followers = profiles.get_follower()
         users = User.objects.get_user_to_follow(pk=request.user.pk) # type: ignore
         photos= Image.objects.filter(post__user=pk).order_by('post')
@@ -202,3 +208,30 @@ class FollowerView(LoginRequiredMixin, generic.View):
             'photos' : photos,
         }
         return render(request, self.template_name, context)
+    
+class SearchResultsView(generic.ListView):
+    template_name = "main/search_results.html"
+
+    # def get_queryset(self):  # new
+    #     query = self.request.GET.get("q")
+    #     object_list = User.objects.filter(Q(username__icontains=query))
+    #     return object_list
+    
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        query = self.request.GET.get('q')
+        results = []
+        qs = None
+        object_list2= Post.objects.filter(Q(caption__icontains=query))
+        object_list1 = Group.objects.filter(Q(message_room__icontains=query))
+        object_list3 = Message.objects.filter(Q(body__icontains=query))
+        
+        results.append(object_list2)
+        results.append(object_list1)
+        results.append(object_list3)
+        
+        if len(results)>0:
+            qs = sorted(chain(*results), reverse=True, key=lambda obj: obj.created_at)
+        context['result'] = qs
+
+        return context

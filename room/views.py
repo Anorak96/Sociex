@@ -192,10 +192,6 @@ class MessageCreateView(LoginRequiredMixin, generic.View):
     login_url = 'user:login'
     redirect_field_name = 'redirect_to'
 
-    def get(self, request):
-        form = MessageForm()
-        return render(request, self.template_name, context={'form':form, 'group':group})
-
     def post(self, request):
         form = MessageForm(request.POST)
         user = User.objects.get(pk=request.user.pk)
@@ -207,9 +203,6 @@ class MessageCreateView(LoginRequiredMixin, generic.View):
             instance.save()
             success = 'Message Posted'
             return HttpResponse(success)
-            # mssage = Message.objects.get(pk=instance.id)
-            # group = mssage.room
-            # return redirect(group.get_absolute_url())
         else:
             print(form.errors)
         context = {'form': form,}

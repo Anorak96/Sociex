@@ -1,3 +1,4 @@
+from ast import mod
 from django.db import models
 import datetime
 import os
@@ -15,9 +16,13 @@ def get_post_image(instance, filename):
     return os.path.join(upload_to, filename)
 
 # Model Manager Feeds
+class Tag(models.Model):
+    tag = models.CharField(max_length=20, primary_key=True)
+
 class Post(models.Model):
     user = models.ForeignKey(User, related_name="user_post", on_delete=models.CASCADE)
     caption = models.TextField(max_length=1500, blank=True)
+    tags = models.ManyToManyField(Tag, related_name='post_tag',blank=True)
     likes = models.ManyToManyField(User, related_name='post_like', blank=True)
     created_at = models.DateTimeField(auto_now=True)
     post_view = models.PositiveIntegerField(default=0, blank=True, null=True)

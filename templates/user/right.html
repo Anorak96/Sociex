@@ -1,51 +1,35 @@
-{% comment %} {% if profiles.get_followering_no > 0 %}
-<div class="mb-1 pb-1 feed">
-    <div class="rounded">
-        <div class="card-header">
-            <div class="d-flex justify-content-between">
-                <b>Following<span>({{profiles.get_followering_no}})</span></b> 
-                {% if profiles.get_following %}
-                <div class="feed-icon px-2">
-                    <a href="{% url 'user:following' profiles.pk %}">See All</a>
+{% if photos %}
+    {% if photos.count > 0 %}
+    <div class="feed pb-1">
+        <div class="rounded">
+            <div class="card-header">
+                <div class="d-flex justify-content-between">
+                    <b>Photos</b>
+                    {% if photos.count > 9 %}
+                        <div class="feed-icon px-2">
+                            <a href="">more<i class="fas fa-angle-double-right"></i></a>
+                        </div>
+                    {% endif %}
                 </div>
-                {% endif %}
+            </div>
+            <div class="photo-prev">
+                {% for photo in photos %}
+                    {% if forloop.counter <= 9 %}
+                        <img class="image-item" src="{{ photo.image.url }}" alt="" style="">
+                    {% endif %}
+                {% endfor %}
             </div>
         </div>
-        <div class="photo-prev">
-            {% for prof in profiles.get_following %}
-                {% if forloop.counter <= 6 %}                    
-                    <a href="{% url 'user:profile' prof.pk %}" class="card follow">
-                        <img class="follow-image"src="{{ prof.profile_pic.url }}" alt="">
-                        <p class="m-0" style="text-align: center; font-size: 14px;
-                        font-weight: 500;">{{prof|capfirst}}</p>
-                    </a>
-                {% endif %}
-            {% endfor %}
-        </div>
     </div>
-</div>
-{% endif %} {% endcomment %}
-
-{% if photos.count > 0 %}
-<div class="feed pb-1">
-    <div class="rounded">
-        <div class="card-header">
-            <div class="d-flex justify-content-between">
-                <b>Photos</b>
-                {% if photos.count > 9 %}
-                    <div class="feed-icon px-2">
-                        <a href="">more<i class="fas fa-angle-double-right"></i></a>
-                    </div>
-                {% endif %}
+    {% endif %}
+{% else %}
+    <div class="feed pb-1">
+        <div class="rounded">
+            <div class="card-header">
+                <div class="d-flex justify-content-between">
+                    <b>Photos</b>
+                </div>
             </div>
         </div>
-        <div class="photo-prev">
-            {% for photo in photos %}
-                {% if forloop.counter <= 9 %}
-                    <img class="image-item" src="{{ photo.image.url }}" alt="" style="">
-                {% endif %}
-            {% endfor %}
-        </div>
     </div>
-</div>
 {% endif %}

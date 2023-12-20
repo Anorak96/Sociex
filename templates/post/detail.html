@@ -10,7 +10,7 @@
 <div class="container mt-2">
     <div class="mx-auto" id="{{post.pk}}" style="width: 670px;">
         <div class="p-2 shad">
-            <div class="d-flex flex-row justify-content-between align-items-center p-2 border-bottom">
+            <div class="d-flex flex-row justify-content-between py-1 align-items-center border-bottom">
                 <div class="d-flex flex-row align-items-center feed-text px-2">
                     <a href="{% url 'user:profile' post.user.pk %}">
                         <img class="rounded-circle" src="{{ post.user.profile_pic.url }}" style="object-fit: cover; width: 50px; height: 50px;">
@@ -19,7 +19,7 @@
                         <a href="{% url 'user:profile' post.user.pk %}">
                             <span><b>{{post.user|capfirst}}</b></span>
                         </a>
-                        <p class="icon-num">{{post.created_at|custom_timesince}}</p>
+                        <p class="tx-11 m-0 icon-num">{{post.created_at|custom_timesince}}</p>
                     </div>
                 </div>
                 {% if post.user == request.user %}
@@ -39,14 +39,12 @@
                     <span class="p-1 caption">{{post.caption}}</span><br>
                 {% endif %}
                 {% if post.post_images %}
-                    <div class="photo-grid">
-                        {% for image in post.post_images.all %}
-                            <div class="image-item">
-                                <img src="{{ image.image.url }}">
-                            </div>
-                        {% endfor %}
-                    </div>
-                {% endif %}
+                <div class="post-image">
+                    {% for image in post.post_images.all|slice:":4" %}
+                        <img class="image-item" src="{{ image.image.url }}" alt="">
+                    {% endfor %}
+                </div>
+            {% endif %}
             </div>
             <div class="d-flex justify-content-start p-1 border-top">
                 <div class="btn" id="likeBTN">

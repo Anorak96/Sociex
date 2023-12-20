@@ -26,7 +26,7 @@
         <div class="card feed p-1">
             <h5 class="center mb-0">Group Conservations</h1><hr class="my-2">
             {% for mssage in grp_msgs %}
-                <div class="card group-feed message mb-1">
+                <div class="group-feed message my-2 mx-1">
                     <h5 style="display: flex;justify-content: end;">
                         <a href="{% url 'room:group' mssage.room.pk %}">
                             {{mssage.room}}
@@ -39,9 +39,9 @@
                             </a>
                             <div class="d-flex flex-column flex-wrap mx-2">
                                 <a href="{% url 'user:profile' mssage.user.pk %}">
-                                    <span>{{mssage.user|capfirst}}</span>
+                                    <span class="bold">{{mssage.user|capfirst}}</span>
                                 </a>
-                                <p class="tx-11 m-0 icon-num">{{mssage.created_at}}</p>
+                                <p class="text-white m-0 icon-num">{{mssage.created_at}}</p>
                             </div>
                         </div>
                         {% if mssage.user == request.user %}
@@ -57,7 +57,7 @@
                         {% endif %}
                     </div>
                     <hr>
-                    <p class="px-3">{{mssage.body}}</p>
+                    <p class="px-3 text-white">{{mssage.body}}</p>
                 </div>
             {% endfor %}
         </div>

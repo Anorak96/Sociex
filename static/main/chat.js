@@ -1,22 +1,29 @@
-function getData() {
-    var receivePK = $('#chat_pk').val();
-    console.log(receivePK)
+$(document).on('submit', '#chatform', function (e) {
+    e.preventDefault();
     
-    var chatPk = "{{ uchat.pk }}"
-    var apiUrl = '/chat/';
-    console.log(apiUrl)
-
+    let _body = $("#id_body").val()
+    console.log(_body)
+    let _receiver_user = $('#receiver_user').val()
+    console.log(_receiver_user)
+    var mydiv = document.getElementById('chatform')
+    var _url = mydiv.getAttribute('data-url')
+    console.log('URL:', _url)
+    
     $.ajax({
-        type: 'GET',
-        url: apiUrl,  // Replace with the actual URL of your view
+        type: "POST",
+        url: _url,
         data: {
-            'receiver_user': receivePK,
+            body: _body,
+            receiver_user: _receiver_user,
+            csrfmiddlewaretoken: $('input[name=csrfmiddlewaretoken]').val()
         },
-        success: function (response) {
-            $('#result').html('Server response: ' + response);
+        success: function(success) {
+            console.log(success)
+            console.log(data)
+        },
+        error: function(error) {
+            console.log(error)
         }
     });
-}
-window.onload = function() {
-    getData();
-};
+    document.getElementById("body").value=""
+});

@@ -5,12 +5,7 @@
 {% block post %}<link rel="stylesheet" type="text/css" href="{% static 'main/post.css' %}">{% endblock %}
 
 {% block body %}
-<section class="post-grid mt-4 container-fluid">
-    <div class="">
-        <div class="shad feed">
-        
-        </div>
-    </div>
+<section class="post-grid mt-4 container">
     <div class="">
         {% for post in posts %}
             <div class="feed shad rounded py-2" id="{{post.pk}}">
@@ -44,15 +39,27 @@
                             <span>{{post.caption}}</span><br>
                         {% endif %}
                         {% if post.post_images %}
-                            <div class="photo-grid">
+                            {% comment %} <div class="photo-grid">
                                 {% for image in post.post_images.all|slice:":4" %}
                                     <div class="image-item">
                                         <img src="{{ image.image.url }}">
                                     </div>
                                 {% endfor %}
+                            </div> {% endcomment %}
+                            <div class="post-image">
+                                {% for image in post.post_images.all|slice:":4" %}
+                                    <img class="image-item" src="{{ image.image.url }}" alt="">
+                                {% endfor %}
                             </div>
                         {% endif %}
                     </a>
+                    <!-- <div class="d-flex flex-row">
+                        {% if post.tags %}
+                            {% for tag in post.tags.all %}
+                                <p style="background-color: #191f25; padding: 2px; margin: 2px; color: white;">#{{tag.tag}}</p>
+                            {% endfor %}
+                        {% endif %}
+                    </div> -->
                 </div>
                 <div class="d-flex justify-content-start p-1 px-4 border-top">
                     <a href="{% url 'post:like' post.pk %}" style="margin-top: 7px;">
@@ -73,15 +80,33 @@
     </div>
     
     <div class="">
-        <div class="shad feed" style="padding: 15px 13px;">
-            {% for following in request.user.get_following %}
-                <ol class="py-1 my-1 border-bottom" style="padding-left: 0;">
-                    <a href="{% url 'user:profile' following.pk %}">
-                        <img class="rounded-circle mx-1" src="{{ following.profile_pic.url }}" style="object-fit: cover; width: 50px; height: 50px;">
-                        <b>{{following|capfirst}}</b>
-                    </a>
-                </ol>
+        <div class="shad feed" style="padding: 0px 13px 5px;">
+            <div class="d-flex justify-content-center mb-2">
+                <h6 class="card-title border-bottom p-2"><b>Your Groups</b></h6>
+            </div>
+            {% for mssage in grp_msgs|slice:":6" %}
+                <div class="group-feed message mb-1" style="border: 1px solid #7F03BB;padding: 5px;border-radius: 6px;">
+                    <div class="d-flex flex-row justify-content-between">
+                        <div class="d-flex flex-row feed-text">
+                            <a href="{% url 'user:profile' mssage.user.pk %}">
+                                <img class="rounded-circle" src="{{ mssage.user.profile_pic.url }}" style="object-fit: cover; width: 40px; height: 40px;">
+                            </a>
+                            <div class="d-flex flex-column flex-wrap mx-2">
+                                <a href="{% url 'user:profile' mssage.user.pk %}">
+                                    <span>{{mssage.user|capfirst}}</span>
+                                </a>
+                                <p class="tx-11 m-0 icon-num" style="font-size: 11px;">{{mssage.created_at|custom_timesince}}</p>
+                                <span style="font-size: 14px;">sent to the group <a href="{% url 'room:group' mssage.room.pk %}" style="font-weight: bold; color: #1733B8 !important;">{{mssage.room}}</a></span>
+                            </div>
+                        </div>
+                    </div>
+                    <p class="px-3" style="color: white; background-color: #191f25; border-radius: 10px; padding: 5px;">{{mssage.body}}</p>
+                </div>
+                <hr>
             {% endfor %}
+            <div class="d-flex justify-content-end mb-2">
+                <a href="{% url 'room:groups' %}" class="btn btn-primary">More</a>
+            </div>
         </div>
     </div>
 </section>

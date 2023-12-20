@@ -27,7 +27,7 @@ class MessageAdmin(admin.ModelAdmin):
     list_filter = ('room', 'user')
     search_fields = ('user', 'room', 'created_at',)
     fieldsets = (
-        (None, {'fields': ('user', 'body', 'room', 'created_at')}),
+        (None, {'fields': ('user', 'body', 'room')}),
     )
     filter_horizontal = ()
     readonly_fields = ['created_at',]

@@ -1,39 +1,27 @@
 .post-grid{
     display: grid;
     gap: 10px;
-    grid-template-columns: 1fr 4fr 1fr;
-    /* grid-template-columns: repeat(auto-fit, minmax(100px, 1fr)); */
+    grid-template-columns: 3fr 1fr;
 }
-.photo-grid {
+.post-image{
     display: grid;
-    gap: 10px;
-    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-    /* grid-template-columns: repeat(2, 1fr); */
-    grid-template-rows: repeat(auto-fit, 1fr);
-    /* grid-template-rows: repeat(auto-fit, minmax(200px, 1fr)); */
-
-    /* grid-auto-rows: 240px; */
+    grid-template-columns: repeat(2, 1fr);
+    gap: 4px;
+    margin: 5px 0px;
 }
-.image-item {
-    position: relative;
-    overflow: hidden;
-}
-.image-item img {
-    width: 100%;
+.image-item{
     height: 100%;
+    width: 100%;
+    object-fit: cover;
 }
-/* Medium screens */
-@media screen and (min-width: 600px) {
-    .card-tall {
-        grid-row: span 2 / auto;
-    }
-
-    .card-wide {
-        grid-column: span 2 / auto;
-    }
+.image-item:nth-child(3):last-child {
+    grid-column: span 2;
 }
-.not-visible {
-    display: none !important;
+.image-item:only-child {
+    grid-column: span 2;
+}
+.image-item:nth-child(4) {
+    grid-column: 2 / -1;
 }
 .icon-num{
     color:#B4C5DB;
@@ -49,4 +37,9 @@
 }
 .caption{
     color: #B4C5DB !important;
+}
+.group-feed{
+    background-color: #4A5B6C !important;
+    padding-right: .5rem !important;
+    padding-left: .5rem !important;
 }

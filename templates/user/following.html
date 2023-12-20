@@ -4,16 +4,16 @@
 
 {% block following %}
 <section class="user-grid">
-    <div class="feed">
-        {% include "user/left.html" %} 
-    </div>
+    
+    {% include "user/left.html" %} 
+    
     <div class="feed p-2">
         <div class="following-grid">
-            {% for following in followings %}
-                <a href="{% url 'user:profile' following.pk %}" class="card follow">
-                    <img class="follow-image"src="{{ following.profile_pic.url }}" alt="">
+            {% for followingg in following %}
+                <a href="{% url 'user:profile' followingg.pk %}" class="card follow">
+                    <img class="follow-image"src="{{ followingg.profile_pic.url }}" alt="">
                     <p class="m-0" style="text-align: center; font-size: 14px;
-                    font-weight: 500;">{{following|capfirst}}</p>
+                    font-weight: 500;">{{followingg|capfirst}}</p>
                 </a>
             {% endfor %}
         </div>

@@ -11,8 +11,8 @@
             </a>
 
             <!-- Search form -->
-            <form class="input-group w-auto my-auto d-none d-sm-flex">
-                <input autocomplete="off" type="search" class="form-control rounded" placeholder="Search" style="min-width: 125px;" />
+            <form class="input-group w-auto my-auto d-none d-sm-flex" method="get" action="{% url 'user:search' %}">
+                <input name="q" type="text" class="form-control rounded" placeholder="Search" style="min-width: 125px;" />
                 <span class="input-group-text border-0 d-none d-lg-flex"><i class="fas fa-search"></i></span>
             </form>
         </div>
@@ -22,12 +22,12 @@
         <ul class="navbar-nav flex-row">
             <li class="nav-item me-2">
                 {% if request.user.is_authenticated %}
-                    <div class="dropdown nav-user">
-                        <img class="dropdown-toggle mt-1 nav-user-image" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" src="{{ request.user.profile_pic.url }}" alt="">
-                        <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
-                                <a class="dropdown-item" href="{% url 'user:profile' request.user %}">{{request.user|capfirst}}</a>
-                                <a class="dropdown-item" href="">Settings</a>
-                                <a class="dropdown-item" href="{% url 'user:logout' %}">Logout</a>
+                    <div class="dropdown">
+                        <img class="dropdown-toggle nav-user-image mt-1" src="{{ request.user.profile_pic.url }}" alt="Dropdown Toggle Image" width="30" height="30" onclick="toggleDropdown()">
+                        <div class="dropdown-menu" id="myDropdown">
+                            <a class="dropdown-item" href="{% url 'user:profile' request.user %}">{{request.user|capfirst}}</a>
+                            <a class="dropdown-item" href="">Settings</a>
+                            <a class="dropdown-item" href="{% url 'user:logout' %}">Logout</a>
                         </div>
                     </div>
                 {% else %}
@@ -61,3 +61,24 @@
         <!-- Right elements -->
     </div>
 </nav>
+
+<script>
+    // Function to toggle the dropdown menu
+    function toggleDropdown() {
+      var dropdownMenu = document.getElementById("myDropdown");
+      dropdownMenu.classList.toggle("show");
+    }
+  
+    // Close the dropdown menu if the user clicks outside of it
+    window.onclick = function(event) {
+      if (!event.target.matches('.dropdown-toggle')) {
+        var dropdowns = document.getElementsByClassName("dropdown-menu");
+        for (var i = 0; i < dropdowns.length; i++) {
+          var openDropdown = dropdowns[i];
+          if (openDropdown.classList.contains('show')) {
+            openDropdown.classList.remove('show');
+          }
+        }
+      }
+    }
+</script>

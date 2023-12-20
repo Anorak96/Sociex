@@ -1,5 +1,6 @@
+from tkinter import Widget
 from django import forms
-from .models import Post, Comment, Image
+from .models import Post, Comment, Image, Tag
 
 class MultipleFileInput(forms.ClearableFileInput):
     allow_multiple_selected = True
@@ -20,12 +21,14 @@ class MultipleFileField(forms.FileField):
 class PostForm(forms.ModelForm):
     caption = forms.CharField(widget=forms.Textarea(attrs={'rows':4, 'style': 'padding: 10px; resize: none;'}), required=False)
     image = MultipleFileField(widget=MultipleFileInput())
+    tag = forms.ModelMultipleChoiceField(queryset=Tag.objects.all(), widget=forms.CheckboxSelectMultiple)
     
     class Meta:
         model = Post
         fields = [
             'caption',
             'image',
+            'tag',
         ]
 
 class ImageForm(forms.ModelForm):

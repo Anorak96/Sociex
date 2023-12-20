@@ -80,7 +80,10 @@ img {
 .navbar-clr {
     background-color: #092c22!important;
 }
-.nav-user:hover .dropdown-menu {
+
+
+/* Show the dropdown menu when the show class is present */
+.show {
     display: block;
 }
 .nav-user-image {

@@ -12,6 +12,7 @@ from tomlkit import comment
 from post.forms import ImageForm, PostForm, CommentForm
 from post.models import Post, Comment, Image
 from user.models import User
+from room.models import Group, Message
 
 class PostListView(LoginRequiredMixin, generic.ListView):
     login_url = 'user:login'
@@ -38,6 +39,20 @@ class PostListView(LoginRequiredMixin, generic.ListView):
         context['posts'] = qs
         user = self.request.user.pk
         context['users'] = User.objects.get_user_to_follow(pk=user) # type: ignore
+        context['groups'] = Group.objects.all().filter(members=user)
+
+        groups = Group.objects.all().filter(members=user)
+        grp_mess = []
+        qs_mess = None
+        #=== Group message==
+        for group in groups:
+            u_group = group.message_room.all().exclude(user=user)  # type: ignore
+            grp_mess.append(u_group)
+        #=== sort and chain messages query===
+        if len(grp_mess)>0:
+            qs_mess = sorted(chain(*grp_mess), reverse=True, key=lambda obj: obj.created_at)
+        context['grp_msgs'] = qs_mess
+        
         return context 
     
 class PostDetailView(FormMixin, generic.DetailView):

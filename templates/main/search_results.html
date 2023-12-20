@@ -1,0 +1,11 @@
+{% extends 'main/base.html' %}
+{% load static %}
+{% load widget_tweaks %}
+{% block title %} - Create Group {% endblock title %}
+{% block group %}<link rel="stylesheet" type="text/css" href="{% static 'main/group.css' %}">{% endblock %}
+
+{% block body %}
+    <!-- {{object_list}} -->
+    <br>
+    {{result}}
+{% endblock %}

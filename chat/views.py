@@ -1,7 +1,11 @@
+from importlib.metadata import requires
 from django.shortcuts import render, redirect
-from django.http import JsonResponse
+from django.http import HttpResponse, JsonResponse
 import json
 from .forms import ChatForm, ImageForm
+from django.utils.decorators import method_decorator
+from django.views.decorators.http import require_POST
+from django.views.decorators.csrf import csrf_exempt
 from django.db.models import Max
 from django.views import generic
 from django.db.models import Q
@@ -20,7 +24,7 @@ class ChatView(LoginRequiredMixin, generic.View):
     def get(self, request):
         form = ChatForm()
         loggedin = request.user
-        messages = Chat.get_message(user=loggedin)
+        messages = Chat.get_message(self, user=loggedin) # type: ignore
         active_direct = None
         direct = None
 
@@ -53,7 +57,7 @@ class ChatMessageView(LoginRequiredMixin, generic.View):
     def get(self, request, pk):
         form = ChatForm()
         loggedin = request.user
-        messages = Chat.get_message(user=loggedin)
+        messages = Chat.get_message(self, user=loggedin) # type: ignore
         active_directs = pk
 
         directs = []
@@ -77,8 +81,15 @@ class ChatMessageView(LoginRequiredMixin, generic.View):
             'loggedin': loggedin,
         }
         return render(request, self.template_name, context)
-    
-class SendMessage(LoginRequiredMixin, generic.View):
 
-    def post(self, request):
-        from_user = request.user
+@method_decorator(csrf_exempt, name='dispatch')
+class SendMessage(LoginRequiredMixin, generic.View):
+    @method_decorator(require_POST)
+    def post(self, request, *args, **kwargs):
+        sender_user = request.user
+        receiver_user = request.POST['to_user']
+        body = request.POST['body']
+        Chat.objects.create(user=sender_user, sender_user=sender_user, receiver_user=receiver_user, body=body)
+        success = "Message Sent"
+        return JsonResponse(success)
+    

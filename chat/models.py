@@ -1,9 +1,7 @@
-from mailbox import Message
 from django.db import models
 import os
 from django.core.validators import FileExtensionValidator
 from uuid import uuid4
-import datetime
 from django.urls import reverse
 from user.models import User
 from django.db.models import Max
@@ -11,7 +9,7 @@ from django.db.models import Max
 def get_message_image(instance, filename):
     upload_to = '{}/{}/{}_{}'.format('message', instance.chat.sender_user, 'to', instance.chat.receiver_user)
     ext = filename.split('.')[-1]
-    filename = '{}_{}_{}_{}.{}'.format(instance.chat.sender_user, 'to', instance.chat.receiver_user, uuid4().hex, ext)
+    filename = '{}_{}_{}.{}'.format(instance.chat.sender_user, 'to', instance.chat.receiver_user, ext)
     return os.path.join(upload_to, filename)
 
 class Chat(models.Model):
@@ -22,29 +20,26 @@ class Chat(models.Model):
     date = models.DateTimeField(auto_now_add=True)
     read = models.BooleanField(default=False)
 
-    def __str__(self):
-        return f"{self.sender_user} sent {self.body[0:20]} to {self.receiver_user}" # type: ignore
-
     class Meta:
         ordering = ('-date',)
 
     def get_absolute_url(self):
         return reverse('chat:chat_detail', kwargs={"pk": self.pk})
 
-    def sender_message(from_user, to_user, body):
+    def sender_message(self, sender_user, receiver_user, body):
         sender_message = Chat(
-            user=from_user, 
-            from_user=from_user, 
-            receiver_user=to_user,
+            user=sender_user, 
+            from_user=sender_user, 
+            receiver_user=receiver_user,
             body=body,
             read=True
         )
         sender_message.save()
 
         receiver_message = Chat(
-            user=to_user,
-            sender_user=from_user,
-            receiver_user=from_user,
+            user=receiver_user,
+            sender_user=sender_user,
+            receiver_user=sender_user,
             body=body,
             read=True
         )
@@ -52,7 +47,7 @@ class Chat(models.Model):
 
         return sender_message
 
-    def get_message(user):
+    def get_message(self, user):
         users = []
         messages = Chat.objects.filter(user=user).values('receiver_user').annotate(last=Max("date")).order_by("-last")
         for message in messages:

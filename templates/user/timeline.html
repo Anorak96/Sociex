@@ -5,74 +5,78 @@
 
 {% block timeline %}
 <section class="user-grid">
-    <div class="feed">
         {% include "user/left.html" %} 
-    </div>
     <div class="">
-        {% for post in posts %}
-            <div class="feed shad py-1" id="{{post.pk}}">
-                <div class="d-flex flex-row justify-content-between align-items-center p-1">
-                    <div class="d-flex flex-row align-items-center feed-text px-2">
-                        <a href="{% url 'user:profile' post.user.pk %}">
-                            <img class="rounded-circle" src="{{ post.user.profile_pic.url }}" style="object-fit: cover; width: 50px; height: 50px;">
-                        </a>
-                        <div class="d-flex flex-column flex-wrap mx-2">
+        {% if posts %}
+            {% for post in posts %}
+                <div class="feed shad py-1" id="{{post.pk}}">
+                    <div class="d-flex flex-row justify-content-between align-items-center p-1">
+                        <div class="d-flex flex-row align-items-center feed-text px-2">
                             <a href="{% url 'user:profile' post.user.pk %}">
-                                <span><b>{{post.user|capfirst}}</b></span>
+                                <img class="rounded-circle" src="{{ post.user.profile_pic.url }}" style="object-fit: cover; width: 50px; height: 50px;">
                             </a>
-                            <p class="tx-11 m-0 icon-num">{{post.created_at|custom_timesince}}</p>
+                            <div class="d-flex flex-column flex-wrap mx-2">
+                                <a href="{% url 'user:profile' post.user.pk %}">
+                                    <span><b>{{post.user|capfirst}}</b></span>
+                                </a>
+                                <p class="tx-11 m-0 icon-num">{{post.created_at|custom_timesince}}</p>
+                            </div>
                         </div>
-                    </div>
-                    {% if post.user == request.user %}
-                        <div class="px-2 dropdown">
-                            <button class="btn bottons dropdown feed-icon" type="button" data-bs-toggle="dropdown"  aria-expanded="false" aria-expanded="false">
-                                <i class="fa fa-ellipsis-v text-black-50"></i>
-                            </button>
-                            <ul class="dropdown-menu">
-                                <li><a class="btn dropdown-item" href="{% url 'post:delete' post.pk %}">Delete</a></li>
-                                <li><a class="btn dropdown-item" href="{% url 'post:post_update' post.pk %}">Update</a></li>
-                            </ul>
-                        </div>
-                    {% endif %}
-                </div>
-                <hr>
-                <div class="p-2">
-                    <a href="{% url 'post:detail' post.pk %}">
-                        {% if post.caption %}
-                            <span>{{post.caption}}</span><br>
-                        {% endif %}
-                        {% if post.post_images %}
-                            <div class="photo-grid">
-                                {% for image in post.post_images.all|slice:":4" %}
-                                    <div class="image-items">
-                                        <img src="{{ image.image.url }}">
-                                    </div>
-                                {% endfor %}
+                        {% if post.user == request.user %}
+                            <div class="px-2 dropdown">
+                                <button class="btn bottons dropdown feed-icon" type="button" data-bs-toggle="dropdown"  aria-expanded="false" aria-expanded="false">
+                                    <i class="fa fa-ellipsis-v text-black-50"></i>
+                                </button>
+                                <ul class="dropdown-menu">
+                                    <li><a class="btn dropdown-item" href="{% url 'post:delete' post.pk %}">Delete</a></li>
+                                    <li><a class="btn dropdown-item" href="{% url 'post:post_update' post.pk %}">Update</a></li>
+                                </ul>
                             </div>
                         {% endif %}
-                    </a>
-                </div>
-                <div class="d-flex justify-content-start p-1 border-top">
-                    <div class="btn" id="likeBTN">
-                        <input type="hidden" id="post_pk" value="{{post.pk}}">
-                        {% if request.user not in post.likes.all %}
-                            <i class="far fa-heart icon"></i>
-                        {% else %}
-                            <i class="fa fa-heart" style="color: red;"></i>
-                        {% endif %}
-                        <span id="like_count" class="icon-num">{{post.likes_no}}</span>
                     </div>
-                    <a class="btn" href="{% url 'post:detail' post.pk %}">
-                        <i class="fas fa-comments icon"></i>
-                        <span class="icon-num">{{post.comment_no}}</span>
-                    </a>
-                    <div class="btn post-views">
-                        <i class="fa-solid fa-eye icon"></i>
-                        <span class="icon-num black">{{post.post_view}}</span>
+                    <hr>
+                    <div class="p-2">
+                        <a href="{% url 'post:detail' post.pk %}">
+                            {% if post.caption %}
+                                <span>{{post.caption}}</span><br>
+                            {% endif %}
+                            {% if post.post_images %}
+                                <div class="photo-grid">
+                                    {% for image in post.post_images.all|slice:":4" %}
+                                        <div class="image-items">
+                                            <img src="{{ image.image.url }}">
+                                        </div>
+                                    {% endfor %}
+                                </div>
+                            {% endif %}
+                        </a>
+                    </div>
+                    <div class="d-flex justify-content-start p-1 border-top">
+                        <div class="btn" id="likeBTN">
+                            <input type="hidden" id="post_pk" value="{{post.pk}}">
+                            {% if request.user not in post.likes.all %}
+                                <i class="far fa-heart icon"></i>
+                            {% else %}
+                                <i class="fa fa-heart" style="color: red;"></i>
+                            {% endif %}
+                            <span id="like_count" class="icon-num">{{post.likes_no}}</span>
+                        </div>
+                        <a class="btn" href="{% url 'post:detail' post.pk %}">
+                            <i class="fas fa-comments icon"></i>
+                            <span class="icon-num">{{post.comment_no}}</span>
+                        </a>
+                        <div class="btn post-views">
+                            <i class="fa-solid fa-eye icon"></i>
+                            <span class="icon-num black">{{post.post_view}}</span>
+                        </div>
                     </div>
                 </div>
+            {% endfor %}
+        {% else %}
+            <div class="feed shad py-1">
+                <p align="center">No Posts to see here!</p>
             </div>
-        {% endfor %}
+        {% endif %}
     </div>
     <div>
         {% include "user/right.html" %}

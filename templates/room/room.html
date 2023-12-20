@@ -3,6 +3,7 @@
 {% load widget_tweaks %}
 {% block title %} - {{group.name}} Group  {% endblock title %}
 {% block group %}<link rel="stylesheet" type="text/css" href="{% static 'main/group.css' %}">{% endblock %}
+{% block group_js %}<script type="text/javascript" src="{% static 'main/group.js' %}"></script>{% endblock %}
 
 {% block body %}
     <div class="d-flex flex-row" style="justify-content: space-between;">
@@ -53,14 +54,9 @@
     </div>
     <section class="group-grid mt-4 container-fluid">
         <div class="card feed px-2">
-            <h5 class="center mb-0">{{group.name}}</h5><hr class="my-2">
-            <p>{{group.description}}</p>
-        </div>
-
-        <div class="card feed px-2">
             <h5 class="center mb-0">Conservations</h1><hr class="my-2">
             {% for mssage in group.message_room.all %}
-                <div class="card group-feed p-2 message mb-2">
+                <div class="group-feed p-2 message my-2">
                     <div class="d-flex flex-row justify-content-between align-items-center">
                         <div class="d-flex flex-row align-items-center feed-text px-2">
                             <a href="{% url 'user:profile' mssage.user.pk %}">
@@ -68,9 +64,9 @@
                             </a>
                             <div class="d-flex flex-column flex-wrap mx-2">
                                 <a href="{% url 'user:profile' mssage.user.pk %}">
-                                    <span>{{mssage.user|capfirst}}</span>
+                                    <span class="bold">{{mssage.user|capfirst}}</span>
                                 </a>
-                                <p class="tx-11 m-0 icon-num">{{mssage.created_at}}</p>
+                                <p class="text-white m-0 icon-num">{{mssage.created_at}}</p>
                             </div>
                         </div>
                         {% if mssage.user == request.user %}
@@ -87,7 +83,7 @@
                     </div>
                     <hr>
                     <div>
-                        <p class="px-2">{{mssage.body}}</p>
+                        <p class="px-2 text-white mb-1">{{mssage.body}}</p>
                     </div>
                 </div>
             {% endfor %}
@@ -109,24 +105,4 @@
             {% endfor %}
         </div>
     </section>
-    <script type="text/javascript">
-        $(document).on('submit', '#message_form', function (e) {
-            e.preventDefault();
-            $.ajax({
-                type: 'POST',
-                url: 'message/',
-                data: {
-                    message: $('message').val(),
-                    group_pk: $('group_message').val(),
-                    csrfmiddlewaretoken: $('input[name=csrfmiddlewaretoken]').val()
-                },
-                success: function(data) {
-                    $(h5).html(data)
-                    console.log('success')
-                    console.log(data)
-                }
-            })
-        })
-    </script>
-{% block group_js %}<link rel="stylesheet" type="text/css" href="{% static 'main/group.js' %}">{% endblock %}
 {% endblock %}
