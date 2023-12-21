@@ -231,17 +231,19 @@ class CommentUpdateView(LoginRequiredMixin, UserPassesTestMixin, generic.UpdateV
         return comment.user == self.request.user
 
 class LikeView(LoginRequiredMixin, generic.View):
-    model = Post
-    template_name = 'post/post.html'
-    login_url = 'user:login'
-    redirect_field_name = 'redirect_to'
 
     def post(self, request, *args, **kwargs):
-        pk_ = self.kwargs.get("pk")
-        post = Post.objects.get(pk=pk_)
+        post = Post.objects.get(pk=self.kwargs['pk'])
         user = self.request.user
-        if user in post.likes:
+
+        if user in post.likes.all():
+            post.likes_num -= 1
             post.likes.remove(user)
+            post.save()
         else:
+            post.likes_num += 1
             post.likes.add(user)
-        return JsonResponse({'status':'success'})
+            post.save()
+        return JsonResponse({'likes':post.likes_num})
+
+        

@@ -13,12 +13,12 @@ class imageInline(admin.TabularInline):
 
 @admin.register(Post)
 class PostAdmin(admin.ModelAdmin):
-    list_display = ('user', 'id', 'caption', 'created_at', 'likes_count', 'post_view')
+    list_display = ('user', 'id', 'caption', 'created_at', 'likes_count', 'likes_num')
     list_per_page = 20
     list_filter = ('user', 'created_at', 'tags',)
     search_fields = ('user', 'caption',)
     fieldsets = (
-        (None, {'fields': ('user', 'caption', 'tags', 'likes', 'post_view')}),
+        (None, {'fields': ('user', 'caption', 'tags', 'likes', 'likes_num')}),
     )
     filter_horizontal = ()
     readonly_fields = ['created_at',]

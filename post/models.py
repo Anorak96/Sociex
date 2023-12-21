@@ -24,8 +24,8 @@ class Post(models.Model):
     caption = models.TextField(max_length=1500, blank=True)
     tags = models.ManyToManyField(Tag, related_name='post_tag',blank=True)
     likes = models.ManyToManyField(User, related_name='post_like', blank=True)
-    created_at = models.DateTimeField(auto_now=True)
-    post_view = models.PositiveIntegerField(default=0, blank=True, null=True)
+    created_at = models.DateTimeField(auto_now_add=True)
+    likes_num = models.PositiveIntegerField(default=0)
     
     # objects: PostManager()
 
@@ -34,10 +34,6 @@ class Post(models.Model):
     
     class Meta:
         ordering = ('-created_at',)
-
-    def save(self, *args, **kwargs):
-        self.created_at = datetime.datetime.now()
-        super(Post, self).save(*args, **kwargs)
 
     def likes_no(self):
         return self.likes.count()

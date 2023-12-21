@@ -3,6 +3,7 @@
 {% load custom_filters %}
 {% block title %} - Post Feed{% endblock title %}
 {% block post %}<link rel="stylesheet" type="text/css" href="{% static 'main/post.css' %}">{% endblock %}
+{% block post_js %}<script type="text/javascript" src="{% static 'main/post.js' %}"></script>{% endblock %}
 
 {% block body %}
 <section class="post-grid mt-4 container">
@@ -62,16 +63,24 @@
                     </div> -->
                 </div>
                 <div class="d-flex justify-content-start p-1 px-4 border-top">
-                    <a href="{% url 'post:like' post.pk %}" style="margin-top: 7px;">
-                        <i class="far fa-heart icon"></i>
-                        <span class="icon-num">{{post.likes_no}}</span>
-                    </a>
-                    <a class="btn" href="{% url 'post:detail' post.pk %}">
+                    <form action="{% url 'post:like' pk=post.pk %}" method="POST" id="likeForm" data-url="{% url 'post:like' pk=post.pk %}">
+                        {% csrf_token %}
+                        <input type="hidden" name="post_pk" id="postpk" value="{{post.pk}}">
+                        <button class="btn action" type="submit" data-post-id="{{ post.pk }}">
+                            {% if request.user in post.likes.all %}
+                                <i class="fas fa-heart" id="heartIcon"></i>
+                            {% else %}
+                                <i class="far fa-heart"  id="heartIcon"></i>
+                            {% endif %}
+                            <span class="icon-num" id="like-count{{post.pk}}">{{post.likes_num}}</span>
+                        </button>
+                    </form>
+                    <a class=" action" href="{% url 'post:detail' post.pk %}">
                         <i class="fas fa-comments icon"></i>
                         <span class="icon-num">{{post.comment_no}}</span>
                     </a>
-                    <div class="btn post-views px-0">
-                        <i class="fa-solid fa-eye icon"></i>
+                    <div class="action">
+                        <i class="fa-solid fa-eye"></i>
                         <span class="icon-num black">{{post.post_view}}</span>
                     </div>
                 </div>
@@ -110,5 +119,4 @@
         </div>
     </div>
 </section>
-{% block post_js %}<script type="text/javascript" src="{% static 'main/post.js' %}"></script>{% endblock %}
 {% endblock %}
