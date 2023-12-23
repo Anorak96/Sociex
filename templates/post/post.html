@@ -7,9 +7,9 @@
 
 {% block body %}
 <section class="post-grid mt-4 container">
-    <div class="">
+    <div id="post-container">
         {% for post in posts %}
-            <div class="feed shad rounded py-2" id="{{post.pk}}">
+            <div class="feed shad rounded py-2" data-post-id="{{ post.pk }}" id="single-post">
                 <div class="d-flex flex-row justify-content-between py-1 align-items-center border-bottom">
                     <div class="d-flex flex-row align-items-center feed-text px-2">
                         <a href="{% url 'user:profile' post.user.pk %}">
@@ -63,18 +63,17 @@
                     </div> -->
                 </div>
                 <div class="d-flex justify-content-start p-1 px-4 border-top">
-                    <form action="{% url 'post:like' pk=post.pk %}" method="POST" id="likeForm" data-url="{% url 'post:like' pk=post.pk %}">
-                        {% csrf_token %}
-                        <input type="hidden" name="post_pk" id="postpk" value="{{post.pk}}">
-                        <button class="btn action" type="submit" data-post-id="{{ post.pk }}">
-                            {% if request.user in post.likes.all %}
-                                <i class="fas fa-heart" id="heartIcon"></i>
-                            {% else %}
-                                <i class="far fa-heart"  id="heartIcon"></i>
-                            {% endif %}
-                            <span class="icon-num" id="like-count{{post.pk}}">{{post.likes_num}}</span>
-                        </button>
-                    </form>
+                    <input type="hidden" name="csrfmiddlewaretoken" value="{{ csrf_token }}">
+                    <button class="btn action" id="like-button" value="{{post.pk}}" data-url="{% url 'post:like' pk=post.pk %}"> 
+                        <input type="hidden" name="csrfmiddlewaretoken" value="{{ csrf_token }}">
+                        <!-- {% if request.user in post.likes.all %}
+                            <i class="fas fa-heart" id="heartIcon"></i>
+                        {% else %}
+                            <i class="far fa-heart"  id="heartIcon"></i>
+                        {% endif %} -->
+                        <i class="far fa-heart {% if request.user in post.likes.all %}fas{% endif %}"  id="heartIcon{{post.pk}}"></i>
+                        <span class="icon-num" id="like-count{{post.pk}}">{{post.likes_num}}</span>
+                    </button>
                     <a class=" action" href="{% url 'post:detail' post.pk %}">
                         <i class="fas fa-comments icon"></i>
                         <span class="icon-num">{{post.comment_no}}</span>
@@ -87,7 +86,7 @@
             </div>
         {% endfor %}
     </div>
-    
+    <input type="hidden" name="csrfmiddlewaretoken" value="{{ csrf_token }}">
     <div class="">
         <div class="shad feed" style="padding: 0px 13px 5px;">
             <div class="d-flex justify-content-center mb-2">

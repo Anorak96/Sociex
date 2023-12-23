@@ -239,11 +239,13 @@ class LikeView(LoginRequiredMixin, generic.View):
         if user in post.likes.all():
             post.likes_num -= 1
             post.likes.remove(user)
+            is_liked = False
             post.save()
         else:
             post.likes_num += 1
             post.likes.add(user)
+            is_liked = True
             post.save()
-        return JsonResponse({'likes':post.likes_num})
+        return JsonResponse({'likes':post.likes_num, 'isliked': is_liked})
 
         

@@ -1,33 +1,32 @@
 $(document).ready(function() {
-    $('#likeForm').on('submit', function (e) {
-        e.preventDefault();
-        var csrftoken = $("[name=csrfmiddlewaretoken]").val();
-        
-        var postId = $(this).find('button').data("post-id");
+    var csrftoken = $("[name=csrfmiddlewaretoken]").val();
+    $('#post-container').on('click', '#like-button', function() {
+        var postId = $(this).closest('.feed').data('post-id');
         console.log(postId)
-        
         var _url = $(this).data("url");
         console.log(_url)
-        
         $.ajax({
             type: 'POST',
             url: _url,
             data: {
-                post_pk: $('#postpk').val()
+                post_pk: postId
             },
-            beforeSend: function(xhr, settings) {
-                xhr.setRequestHeader("X-CSRFToken", csrftoken);
-            },
+            headers: {'X-CSRFToken': csrftoken},
             success: function(data) {
-                // $("#like-count").text(data.likes)
-                $("#like-count" + postId).text(data.likes)
-                console.log("it works")
+                $("#like-count" + postId).text(data.likes);
+                if (data.isliked) {
+                    $('#heartIcon' + postId).removeClass('far').addClass('fas')
+                } else {
+                    $('#heartIcon' + postId).removeClass('fas').addClass('far')
+                }
+                console.log('likes:', data.likes);
+                console.log('likeStatus:', data.isliked);
             },
             error: function(error) {
                 console.log(error)
             }
-        })
-    })
-})
+        });
+    });
+});
 
-
+  
