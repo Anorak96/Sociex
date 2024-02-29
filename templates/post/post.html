@@ -16,7 +16,7 @@
                             <img class="rounded-circle" src="{{ post.user.profile_pic.url }}" style="object-fit: cover; width: 50px; height: 50px;">
                         </a>
                         <div class="d-flex flex-column flex-wrap mx-2">
-                            <a href="{% url 'user:profile' post.user.pk %}">
+                            <a href="{% url 'user:profile' post.user.pk %}" class="post-user">
                                 <span><b>{{post.user|capfirst}}</b></span>
                             </a>
                             <p class="tx-11 m-0 icon-num">{{post.created_at|custom_timesince}}</p>
@@ -37,7 +37,7 @@
                 <div class="p-2 px-3">
                     <a href="{% url 'post:detail' post.pk %}">
                         {% if post.caption %}
-                            <span>{{post.caption}}</span><br>
+                            <span style="font-weight: 500;">{{post.caption}}</span><br>
                         {% endif %}
                         {% if post.post_images %}
                             {% comment %} <div class="photo-grid">
@@ -66,11 +66,6 @@
                     <input type="hidden" name="csrfmiddlewaretoken" value="{{ csrf_token }}">
                     <button class="btn action" id="like-button" value="{{post.pk}}" data-url="{% url 'post:like' pk=post.pk %}"> 
                         <input type="hidden" name="csrfmiddlewaretoken" value="{{ csrf_token }}">
-                        <!-- {% if request.user in post.likes.all %}
-                            <i class="fas fa-heart" id="heartIcon"></i>
-                        {% else %}
-                            <i class="far fa-heart"  id="heartIcon"></i>
-                        {% endif %} -->
                         <i class="far fa-heart {% if request.user in post.likes.all %}fas{% endif %}"  id="heartIcon{{post.pk}}"></i>
                         <span class="icon-num" id="like-count{{post.pk}}">{{post.likes_num}}</span>
                     </button>
@@ -80,20 +75,20 @@
                     </a>
                     <div class="action">
                         <i class="fa-solid fa-eye"></i>
-                        <span class="icon-num black">{{post.post_view}}</span>
+                        <span class="icon-num black">{{post.views}}</span>
                     </div>
                 </div>
             </div>
         {% endfor %}
     </div>
     <input type="hidden" name="csrfmiddlewaretoken" value="{{ csrf_token }}">
-    <div class="">
-        <div class="shad feed" style="padding: 0px 13px 5px;">
+    <div class="post-group">
+        <div class="shad feed rounded" style="padding: 0px 13px 5px;">
             <div class="d-flex justify-content-center mb-2">
                 <h6 class="card-title border-bottom p-2"><b>Your Groups</b></h6>
             </div>
             {% for mssage in grp_msgs|slice:":6" %}
-                <div class="group-feed message mb-1" style="border: 1px solid #7F03BB;padding: 5px;border-radius: 6px;">
+                <div class="group-feed message mb-1" style="border: 1px outset #7F03BB;padding: 5px;border-radius: 6px;">
                     <div class="d-flex flex-row justify-content-between">
                         <div class="d-flex flex-row feed-text">
                             <a href="{% url 'user:profile' mssage.user.pk %}">
@@ -101,10 +96,12 @@
                             </a>
                             <div class="d-flex flex-column flex-wrap mx-2">
                                 <a href="{% url 'user:profile' mssage.user.pk %}">
-                                    <span>{{mssage.user|capfirst}}</span>
+                                    <span style="font-weight: 600;">{{mssage.user|capfirst}}</span>
                                 </a>
                                 <p class="tx-11 m-0 icon-num" style="font-size: 11px;">{{mssage.created_at|custom_timesince}}</p>
-                                <span style="font-size: 14px;">sent to the group <a href="{% url 'room:group' mssage.room.pk %}" style="font-weight: bold; color: #1733B8 !important;">{{mssage.room}}</a></span>
+                                <span style="font-size: 14px;">sent to the group 
+                                    <a href="{% url 'room:group' mssage.room.pk %}" style="font-weight: bold; color: #fed646 !important;">{{mssage.room}}</a>
+                                </span>
                             </div>
                         </div>
                     </div>

@@ -47,11 +47,10 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     "django.contrib.sites",  # new
     "django.contrib.sitemaps",  # new 
-    'user',
-    'chat',
-    'post',
-    'room',
-
+    'user', #app
+    'chat', #app
+    'post', #app
+    'room', #app
     'widget_tweaks',
     'fontawesomefree',
     'debug_toolbar',
@@ -67,7 +66,6 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
-
     'debug_toolbar.middleware.DebugToolbarMiddleware',
 ]
 

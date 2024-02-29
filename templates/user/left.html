@@ -19,7 +19,7 @@
                             </div>
                         </div>
                         {% if request.user != prof.followers.all %}
-                            <form action="{% url 'user:follow' profiles.pk %}" method="POST">
+                            <form action="{% url 'user:follow' profile.pk %}" method="POST">
                                 {% csrf_token %}
                                 <input type="hidden" name="prof_pk" value="{{ prof.pk }}">
                                 <button id="follow" class="btn bottons btn-icon" type="submit" style="margin-left: 15px; margin-top: 9px;"><i class="fa-solid fa-user-plus"></i></button>
@@ -52,7 +52,7 @@
                                 <p class="tx-11 text-muted mb-1">{{mutualfriends_num}} Mutual Friends</p>
                             </div>
                         </div>
-                        <form action="{% url 'user:follow' profiles.pk %}" method="POST">
+                        <form action="{% url 'user:follow' profile.pk %}" method="POST">
                             {% csrf_token %}
                             <input type="hidden" name="prof_pk" value="{{ prof.pk }}">
                             <button id="follow" class="btn bottons btn-icon" type="submit" style="margin-left: 15px; margin-top: 9px;"><i class="fa-solid fa-user-plus"></i></button>

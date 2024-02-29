@@ -27,13 +27,9 @@ urlpatterns = [
     path('auth/change_password/', auth_views.PasswordChangeView.as_view(
         template_name='user/change-password.html'), name='password_change'),
 
-    # new path below...
     path(
-        "sitemap.xml",
-        sitemap,
-        {"sitemaps": {"posts": PostSitemap}},
+        "sitemap.xml", sitemap, {"sitemaps": {"posts": PostSitemap}},
     ),
-
     path('__debug__/', include('debug_toolbar.urls')),
 ]
 

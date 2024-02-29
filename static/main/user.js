@@ -15,31 +15,29 @@ if (togglePassword) {
         }
     });
 }
-
 // ===============================================================================================
-let form = document.getElementById("follow_form")
-console.log(form)
-form.addEventListener("submit", follow)
-
-function follow(e) {
-    alert('hj')
-    // let comm = document.getElementById("id_comment").value
-    // const data = { comment : comm };
-    // let url = "/post/comment/<pk>/"
-
-    // fetch(url, {
-    //     method: 'POST', // or 'PUT'
-    //     headers: {
-    //         'Content-Type': 'application/json',
-    //         'X-CSRFToken': csrftoken,
-    //     },
-    //     body: JSON.stringify(data),
-    // })
-    // .then(response => response.json())
-    // .then(data => {
-    //     console.log('Success:', data);
-    // })
-    // .catch((error) => {
-    //     console.error('Error:', error);
-    // });
-}
+$(document).ready(function() {
+    var csrftoken = $("[name=csrfmiddlewaretoken]").val();
+    $('#profile-button').on('click', '#fllw-btn', function() {
+        var userId = $(this).closest('.btn').data('user-id');
+        console.log(userId)
+        var _url = $(this).data("url");
+        console.log(_url)
+        $.ajax({
+            type: 'POST',
+            url: _url,
+            data: {
+                prof_pk: userId,
+                csrfmiddlewaretoken: '{{ csrf_token }}',
+            },
+            headers: {'X-CSRFToken': csrftoken},
+            dataType: 'json',
+            success: function(data) {
+                console.log('succss:', 'works')
+            },
+            error: function(error) {
+                console.log(error)
+            }
+        });
+    });
+});

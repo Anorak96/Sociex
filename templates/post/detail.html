@@ -7,9 +7,9 @@
 {% block post %}<link rel="stylesheet" type="text/css" href="{% static 'main/post.css' %}">{% endblock %}
 
 {% block body %}
-<div class="container mt-2">
-    <div class="mx-auto" id="{{post.pk}}" style="width: 670px;">
-        <div class="p-2 shad">
+<div class="container mt-2" id="post-container">
+    <div class="mx-auto" style="width: 670px;">
+        <div class="p-2 shad feed" data-post-id="{{ post.pk }}" id="single-post">
             <div class="d-flex flex-row justify-content-between py-1 align-items-center border-bottom">
                 <div class="d-flex flex-row align-items-center feed-text px-2">
                     <a href="{% url 'user:profile' post.user.pk %}">
@@ -46,30 +46,27 @@
                 </div>
             {% endif %}
             </div>
-            <div class="d-flex justify-content-start p-1 border-top">
-                <div class="btn" id="likeBTN">
-                    <input type="hidden" id="post_pk" value="{{post.pk}}">
-                    {% if request.user not in post.likes.all %}
-                        <i class="far fa-heart icon"></i>
-                    {% else %}
-                        <i class="fa fa-heart" style="color: red;"></i>
-                    {% endif %}
-                    <span class="icon-num" id="like_count">{{post.likes_no}}</span>
-                </div>
-                <div class="btn">
-                    <i class="fas fa-comments mx-1 icon"></i>
+            <div class="d-flex justify-content-start p-1 px-4 border-top">
+                <input type="hidden" name="csrfmiddlewaretoken" value="{{ csrf_token }}">
+                <button class="btn action" id="like-button" value="{{post.pk}}" data-url="{% url 'post:like' pk=post.pk %}"> 
+                    <input type="hidden" name="csrfmiddlewaretoken" value="{{ csrf_token }}">
+                    <i class="far fa-heart {% if request.user in post.likes.all %}fas{% endif %}"  id="heartIcon{{post.pk}}"></i>
+                    <span class="icon-num" id="like-count{{post.pk}}">{{post.likes_num}}</span>
+                </button>
+                <a class=" action" href="{% url 'post:detail' post.pk %}">
+                    <i class="fas fa-comments icon"></i>
                     <span class="icon-num">{{post.comment_no}}</span>
-                </div>
-                <div class="btn post-views">
-                    <i class="fa-solid fa-eye icon"></i>
-                    <span class="icon-num">{{post.post_view}}</span>
+                </a>
+                <div class="action">
+                    <i class="fa-solid fa-eye"></i>
+                    <span class="icon-num black">{{post.views}}</span>
                 </div>
             </div>
         </div>
 
         <div class="p-2 shad">
             <div class="card-header d-flex justify-content-center">
-            <b>Comments</b>
+            <b class="text-white">Comments</b>
             </div>
             <div class="card-body p-1">
                 {% if comments %}
@@ -106,7 +103,7 @@
                     {% endfor %}
                 {% else %}
                     <div class="d-flex justify-content-center align-items-center">
-                        <h4>Be the first to comment.</h4>
+                        <h4 class="text-white">Be the first to comment.</h4>
                     </div>
                 {% endif %}
             </div>

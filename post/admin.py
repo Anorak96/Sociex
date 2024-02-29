@@ -13,7 +13,7 @@ class imageInline(admin.TabularInline):
 
 @admin.register(Post)
 class PostAdmin(admin.ModelAdmin):
-    list_display = ('user', 'id', 'caption', 'created_at', 'likes_count', 'likes_num')
+    list_display = ('user', 'id', 'captionn', 'created_at', 'likes_count')
     list_per_page = 20
     list_filter = ('user', 'created_at', 'tags',)
     search_fields = ('user', 'caption',)
@@ -26,6 +26,9 @@ class PostAdmin(admin.ModelAdmin):
 
     def likes_count(self, obj):
         return obj.likes.count()
+    
+    def captionn(self, obj):
+        return obj.caption[:90]
     
 @admin.register(Comment)
 class CommentAdmin(admin.ModelAdmin):
@@ -48,3 +51,4 @@ class TagAdmin(admin.ModelAdmin):
     list_display = ('tag',)
     list_filter = ('tag',)
     list_per_page = 20
+    

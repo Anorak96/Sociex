@@ -7,7 +7,7 @@ class MessageInline(admin.TabularInline):
 
 @admin.register(Group)
 class GroupAdmin(admin.ModelAdmin):
-    list_display = ('name', 'created_by', 'description', 'created_at')
+    list_display = ('name', 'created_by', 'description', 'created_at', 'mem_count', 'mod_count')
     list_per_page = 20
     list_filter = ('created_at', 'created_by',)
     search_fields = ('name', 'created_by', 'created_at',)
@@ -19,6 +19,12 @@ class GroupAdmin(admin.ModelAdmin):
     filter_horizontal = ()
     readonly_fields = ['created_at',]
     inlines = [MessageInline]
+
+    def mod_count(self, obj):
+        return obj.mods.count()
+
+    def mem_count(self, obj):
+        return obj.members.count()
 
 @admin.register(Message)
 class MessageAdmin(admin.ModelAdmin):

@@ -4,25 +4,13 @@
 {% block group %}<link rel="stylesheet" type="text/css" href="{% static 'main/group.css' %}">{% endblock %}
 
 {% block body %}
-<div class="container-fluid">
+<div class="container">
     <section>
         <div class="d-flex justify-content-end">
             <a href="{% url 'room:create' %}" class="btn btn-primary"> <i class="fas fa-plus"></i> Create Group</a>
         </div>
     </section>
     <section class="basic-grid mt-2">
-        <div class="card feed">
-            {% for group in groups %}
-                <a href="{% url 'room:group' group.pk %}">
-                    <div class="card group-feed">
-                        <p style="margin-top: 0;margin-bottom: 15px;">{{group.name}}</p>
-                        <p style="margin-top: 0;margin-bottom: 10px;">{{group.description}}</p>
-                    </div>
-                </a>
-                <hr>
-            {% endfor %}
-        </div>
-
         <div class="card feed p-1">
             <h5 class="center mb-0">Group Conservations</h1><hr class="my-2">
             {% for mssage in grp_msgs %}

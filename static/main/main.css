@@ -80,8 +80,16 @@ img {
 .navbar-clr {
     background-color: #092c22!important;
 }
-
-
+@media screen and (max-width: 425px) {
+    .icons-row {
+        display: none;
+    }
+}
+@media screen and (min-width: 426px) {
+    .humburger-icon {
+        display: none;
+    }
+}
 /* Show the dropdown menu when the show class is present */
 .show {
     display: block;

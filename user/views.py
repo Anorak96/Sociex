@@ -68,12 +68,12 @@ class LogoutView(generic.View):
 class UserDetailView(FormMixin, generic.DetailView):
     model = User
     template_name = "user/timeline.html"
-    context_object_name = 'profiles'
+    context_object_name = 'profile'
     form_class = PostForm
 
-    def get_success_url(self):
-        pk = self.kwargs['pk']
-        return reverse("user:profile", kwargs={"pk": pk})
+    # def get_success_url(self):
+    #     pk = self.kwargs['pk']
+    #     return reverse("user:profile", kwargs={"pk": pk})
     
     def get_context_data(self, **kwargs):
         context = super(UserDetailView, self).get_context_data(**kwargs)
@@ -96,6 +96,13 @@ class UserDetailView(FormMixin, generic.DetailView):
                     if f1 == f2:
                         mut_user = f1
                         friends.append(mut_user)
+
+        my_profile = User.objects.get(pk=self.request.user.pk)
+        profile = get_object_or_404(User, pk=pk_)
+        if pk in my_profile.following.all():
+            context['button_text'] = 'Unfollow'
+        else:
+            context['button_text'] = 'Follow'
         return context
 
     def post(self, request, pk):
@@ -147,22 +154,22 @@ class FollowView(LoginRequiredMixin, generic.View):
     login_url = 'user:login'
     redirect_field_name = 'redirect_to' 
 
-    def post(self, request, pk):
+    def post(self, request, *args, **kwargs):
         my_profile = User.objects.get(pk=request.user.pk)
-        # other profiles
-        pk = request.POST.get('prof_pk')
-        profile = get_object_or_404(User, pk=pk)
+        other_profile = get_object_or_404(User, pk=self.kwargs['pk'])
 
-        if my_profile == profile:
+        if my_profile == other_profile:
             messages.info("You can't follow yourself") # type: ignore
         else:
-            if profile in my_profile.following.all():
-                my_profile.following.remove(profile)
-                profile.follower.remove(my_profile)
+            if other_profile in my_profile.following.all():
+                my_profile.following.remove(other_profile)
+                other_profile.follower.remove(my_profile)
+                is_following = False
             else:
-                my_profile.following.add(profile)
-                profile.follower.add(my_profile)
-            return redirect(request.META.get('HTTP_REFERER'))
+                my_profile.following.add(other_profile)
+                other_profile.follower.add(my_profile)
+                is_following = True
+            return JsonResponse({'is_following': is_following})
 
 class FollowingView(LoginRequiredMixin, generic.View):
     login_url = 'user:login'

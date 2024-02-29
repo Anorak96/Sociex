@@ -22,9 +22,7 @@ class PostListView(LoginRequiredMixin, generic.ListView):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        pk_ = self.kwargs.get("pk")
-        user = User.objects.get(pk=self.request.user.pk) # get object of logged in user
-        following = [prof for prof in user.following.all()] # profile that logged in user is folowing
+        following = [prof for prof in self.request.user.following.all()] # profile that logged in user is folowing # type: ignore
         posts = []
         qs = None
         #=== following posts===
@@ -36,23 +34,18 @@ class PostListView(LoginRequiredMixin, generic.ListView):
         #=== sort and chain post query===
         if len(posts)>0:
             qs = sorted(chain(*posts), reverse=True, key=lambda obj: obj.created_at)
-        context['posts'] = qs
-        user = self.request.user.pk
-        context['users'] = User.objects.get_user_to_follow(pk=user) # type: ignore
-        context['groups'] = Group.objects.all().filter(members=user)
-
-        groups = Group.objects.all().filter(members=user)
+        #Group Messages
+        groups = Group.objects.all().filter(members=self.request.user.pk)
         grp_mess = []
         qs_mess = None
-        #=== Group message==
         for group in groups:
-            u_group = group.message_room.all().exclude(user=user)  # type: ignore
+            u_group = group.message_room.all().exclude(user=self.request.user.pk)  # type: ignore
             grp_mess.append(u_group)
-        #=== sort and chain messages query===
         if len(grp_mess)>0:
             qs_mess = sorted(chain(*grp_mess), reverse=True, key=lambda obj: obj.created_at)
+
         context['grp_msgs'] = qs_mess
-        
+        context['posts'] = qs
         return context 
     
 class PostDetailView(FormMixin, generic.DetailView):
@@ -69,6 +62,8 @@ class PostDetailView(FormMixin, generic.DetailView):
         pk_ = self.kwargs.get("pk")
         context['post'] = Post.objects.get(pk=pk_)
         post = get_object_or_404(Post, pk=pk_)
+        post.views += 1  # Increase view count
+        post.save()
         context['comments'] = Comment.objects.filter(post=post)
         context['form'] = CommentForm()
         return context
@@ -99,7 +94,10 @@ class PostCreate(LoginRequiredMixin, generic.View):
 
     def get(self, request):
         form = PostForm()
-        return render(request, self.template_name, context={'form':form })
+        context={
+            'form':form,
+        }
+        return render(request, self.template_name, context)
 
     def post(self, request):
         form = PostForm(request.POST, request.FILES)
@@ -231,7 +229,9 @@ class CommentUpdateView(LoginRequiredMixin, UserPassesTestMixin, generic.UpdateV
         return comment.user == self.request.user
 
 class LikeView(LoginRequiredMixin, generic.View):
-
+    login_url = 'user:login'
+    redirect_field_name = 'redirect_to' 
+    
     def post(self, request, *args, **kwargs):
         post = Post.objects.get(pk=self.kwargs['pk'])
         user = self.request.user
